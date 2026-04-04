@@ -1,1 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام المحاسبة المتكامل - الإصدار الثاني</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* خلفية متحركة */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            animation: moveBg 10s ease-in-out infinite;
+        }
+        
+        @keyframes moveBg {
+            0%, 100% { transform: translateX(0); opacity: 0.5; }
+            50% { transform: translateX(5%); opacity: 1; }
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            z-index: 1;
+            transition: transform 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .login-container:hover {
+            transform: translateY(-5px);
+        }
+        
+        .logo {
+            font-size: 64px;
+            margin-bottom: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        h1 {
+            color: #1e3a5f;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #1e3a5f;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(30,58,95,0.1);
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1e3a5f, #0a2f44);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(30,58,95,0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .error {
+            color: #dc3545;
+            margin-top: 10px;
+            font-size: 14px;
+            padding: 10px;
+            background: #ffe6e6;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .info {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .info p {
+            margin: 5px 0;
+        }
+        
+        .info strong {
+            color: #1e3a5f;
+        }
+        
+        .version-badge {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            z-index: 1;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .logo {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">📊⚡💰</div>
+        <h1>نظام المحاسبة المتكامل</h1>
+        <div class="subtitle">الإصدار الثاني | NextGen Accounting</div>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label>🔐 رقم العضوية</label>
+                <input type="text" id="memberId" placeholder="أدخل رقم العضوية" required autocomplete="off">
+            </div>
+            <button type="submit">
+                <span>🚪</span> دخول
+            </button>
+        </form>
+        <div id="errorMsg" class="error"></div>
+        
+        <div class="info">
+            <p>🔹 <strong>ADMIN001</strong> - المدير العام (صلاحية كاملة)</p>
+            <p>🔹 <strong>AUDITOR001</strong> - مراجع الحسابات</p>
+            <p>🔹 <strong>M001</strong> - موظف</p>
+            <p>🔹 <strong>M002</strong> - خياط</p>
+            <hr style="margin: 10px 0;">
+            <p>✨ نظام متعدد البيئات | تكرار تلقائي | اعتراضات فورية</p>
+        </div>
+    </div>
+    <div class="version-badge">v2.0 | NextGen Accounting</div>
 
+    <script type="module">
+        import { supabase, getMemberById, addAuditLog } from './supabase.js';
+        
+        const form = document.getElementById('loginForm');
+        const memberIdInput = document.getElementById('memberId');
+        const errorDiv = document.getElementById('errorMsg');
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const memberId = memberIdInput.value.trim();
+            
+            if (!memberId) {
+                showError('الرجاء إدخال رقم العضوية');
+                return;
+            }
+            
+            try {
+                // التحقق من وجود العضو
+                const member = await getMemberById(memberId);
+                
+                if (!member) {
+                    showError('رقم العضوية غير صحيح');
+                    return;
+                }
+                
+                // تسجيل حدث الدخول
+                await addAuditLog({
+                    user_id: member.id,
+                    action: 'login',
+                    target_type: 'auth',
+                    target_id: member.id,
+                    ip_address: 'client'
+                });
+                
+                // حفظ معلومات الجلسة
+                localStorage.setItem('memberId', member.id);
+                localStorage.setItem('memberRole', member.role);
+                localStorage.setItem('memberName', member.name);
+                localStorage.setItem('systemId', member.system_id || 'default');
+                
+                // التوجيه حسب الدور
+                if (member.role === 'admin') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'dashboard.html';
+                }
+                
+            } catch (error) {
+                console.error('خطأ:', error);
+                showError('حدث خطأ في الاتصال بقاعدة البيانات');
+            }
+        });
+        
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
