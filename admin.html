@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المدير - نظام المحاسبة المتكامل</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            background: #f0f2f5;
+        }
+        
+        /* الهيدر */
+        .header {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .logo h2 {
+            font-size: 22px;
+        }
+        
+        .logo span {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 14px;
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: #c82333;
+            transform: scale(1.02);
+        }
+        
+        /* الحاوية */
+        .container {
+            max-width: 1400px;
+            margin: 25px auto;
+            padding: 0 25px;
+        }
+        
+        /* التبويبات */
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 12px 28px;
+            background: white;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #1e3a5f, #0a2f44);
+            color: white;
+        }
+        
+        /* محتوى التبويبات */
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* النماذج */
+        .form-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .form-card h3 {
+            color: #1e3a5f;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+            font-size: 13px;
+        }
+        
+        .form-group input, .form-group select {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1e3a5f;
+            box-shadow: 0 0 0 2px rgba(30,58,95,0.1);
+        }
+        
+        /* الجداول */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        th {
+            background: #f8f9fa;
+            color: #1e3a5f;
+            padding: 14px 12px;
+            text-align: right;
+            font-weight: bold;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        /* الحالات */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .badge-pending {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .badge-under_review {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .badge-approved, .badge-confirmed, .badge-active {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-rejected {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-inactive {
+            background: #6c757d;
+            color: white;
+        }
+        
+        /* الأزرار */
+        .btn-sm {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 2px;
+            transition: all 0.2s;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: #1e3a5f;
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-sm:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box input, .search-box select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .stats-mini {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-mini {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .tab-btn {
+                padding: 8px 18px;
+                font-size: 13px;
+            }
+            
+            th, td {
+                font-size: 12px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <h2>👑 نظام المحاسبة المتكامل</h2>
+            <span>الإصدار الثاني | صلاحيات المدير</span>
+        </div>
+        <div class="user-info">
+            <span class="user-badge">👤 <span id="adminName"></span></span>
+            <button class="logout-btn" onclick="logout()">🚪 خروج</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('transactions')">📋 المعاملات المالية</button>
+            <button class="tab-btn" onclick="switchTab('productions')">🧵 إنتاج الخياطين</button>
+            <button class="tab-btn" onclick="switchTab('objections')">✋ الاعتراضات</button>
+            <button class="tab-btn" onclick="switchTab('recurring')">🔄 التكرار التلقائي</button>
+            <button class="tab-btn" onclick="switchTab('members')">👥 إدارة الأعضاء</button>
+            <button class="tab-btn" onclick="switchTab('systems')">🏢 الأنظمة (Multi-Tenant)</button>
+            <button class="tab-btn" onclick="switchTab('audit')">📜 سجل الأحداث</button>
+        </div>
+        
+        <!-- تبويب المعاملات -->
+        <div id="transactionsTab" class="tab-content active">
+            <div class="form-card">
+                <h3>➕ إضافة معاملة جديدة</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>رقم العضوية</label>
+                        <input type="text" id="transMemberId" placeholder="مثال: M001">
+                    </div>
+                    <div class="form-group">
+                        <label>الوصف</label>
+                        <input type="text" id="transDesc" placeholder="وصف المعاملة">
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ</label>
+                        <input type="number" id="transAmount" placeholder="المبلغ">
+                    </div>
+                    <div class="form-group">
+                        <label>التصنيف</label>
+                        <input type="text" id="transCategory" placeholder="رواتب، مكافآت، صرف...">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="addTransaction()">➕ إضافة معاملة</button>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" id="searchMemberTrans" placeholder="بحث برقم العضوية..." onkeyup="filterTransactions()">
+                <select id="filterStatusTrans" onchange="filterTransactions()">
+                    <option value="all">جميع الحالات</option>
+                    <option value="pending">قيد المراجعة</option>
+                    <option value="under_review">قيد مراجعة المشرف</option>
+                    <option value="approved">مؤكد</option>
+                    <option value="rejected">مرفوض</option>
+                </select>
+            </div>
+            
+            <div class="stats-mini">
+                <div class="stat-mini">⏳ قيد المراجعة: <span id="statPending">0</span></div>
+                <div class="stat-mini">🔄 قيد مراجعة المشرف: <span id="statUnderReview">0</span></div>
+                <div class="stat-mini">✅ مؤكدة: <span id="statApproved">0</span></div>
+            </div>
+            
+            <div class="table-wrapper">
+                <table id="transactionsTable">
+                    <thead>
+                        <tr><th>رقم العضوية</th><th>الوصف</th><th>المبلغ</th><th>التصنيف</th><th>التاريخ</th><th>الحالة</th><th>الإجراءات</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- تبويب الإنتاج -->
+        <div id="productionsTab" class="tab-content">
+            <div class="form-card">
+                <h3>➕ إضافة إنتاج جديد</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>رقم العضوية</label>
+                        <input type="text" id="prodMemberId" placeholder="مثال: M002">
+                    </div>
+                    <div class="form-group">
+                        <label>اسم المنتج</label>
+                        <input type="text" id="prodName" placeholder="اسم المنتج">
+                    </div>
+                    <div class="form-group">
+                        <label>الموديل</label>
+                        <input type="text" id="prodModel" placeholder="الموديل">
+                    </div>
+                    <div class="form-group">
+                        <label>الكمية</label>
+                        <input type="number" id="prodQuantity" placeholder="الكمية">
+                    </div>
+                    <div class="form-group">
+                        <label>السعر</label>
+                        <input type="number" id="prodPrice" placeholder="السعر (اختياري)">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="addProduction()">➕ إضافة إنتاج</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="productionsTable">
+                    <thead><tr><th>رقم العضوية</th><th>المنتج</th><th>الموديل</th><th>الكمية</th><th>السعر</th><th>التاريخ</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- تبويب الاعتراضات -->
+        <div id="objectionsTab" class="tab-content">
+            <div class="table-wrapper">
+                <table id="objectionsTable">
+                    <thead><tr><th>رقم العضوية</th><th>الاسم</th><th>النوع</th><th>سبب الاعتراض</th><th>التاريخ</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- تبويب التكرار التلقائي -->
+        <div id="recurringTab" class="tab-content">
+            <div class="form-card">
+                <h3>🔄 إعداد تكرار تلقائي</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>رقم العضوية</label>
+                        <input type="text" id="recMemberId" placeholder="رقم العضوية">
+                    </div>
+                    <div class="form-group">
+                        <label>الوصف</label>
+                        <input type="text" id="recDesc" placeholder="وصف المعاملة">
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ</label>
+                        <input type="number" id="recAmount" placeholder="المبلغ">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع التكرار</label>
+                        <select id="recType">
+                            <option value="daily">يومي</option>
+                            <option value="weekly">أسبوعي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>التصنيف</label>
+                        <input type="text" id="recCategory" placeholder="التصنيف">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="addRecurring()">➕ إضافة تكرار</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="recurringTable">
+                    <thead><tr><th>رقم العضوية</th><th>الوصف</th><th>المبلغ</th><th>النوع</th><th>التصنيف</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- تبويب الأعضاء -->
+        <div id="membersTab" class="tab-content">
+            <div class="form-card">
+                <h3>➕ إضافة عضو جديد</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>رقم العضوية</label>
+                        <input type="text" id="newMemberId" placeholder="رقم العضوية">
+                    </div>
+                    <div class="form-group">
+                        <label>الاسم</label>
+                        <input type="text" id="newMemberName" placeholder="الاسم الكامل">
+                    </div>
+                    <div class="form-group">
+                        <label>الدور</label>
+                        <select id="newMemberRole">
+                            <option value="employee">موظف</option>
+                            <option value="tailor">خياط</option>
+                            <option value="auditor">مراجع حسابات</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="addNewMember()">➕ إضافة عضو</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="membersTable">
+                    <thead><tr><th>رقم العضوية</th><th>الاسم</th><th>الدور</th><th>تاريخ التسجيل</th><th>النظام</th><th>الإجراءات</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- تبويب الأنظمة (Multi-Tenant) -->
+        <div id="systemsTab" class="tab-content">
+            <div class="form-card">
+                <h3>🏢 إنشاء نظام جديد</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>معرف النظام</label>
+                        <input type="text" id="systemId" placeholder="مثال: company, family, production">
+                    </div>
+                    <div class="form-group">
+                        <label>اسم النظام</label>
+                        <input type="text" id="systemName" placeholder="اسم النظام">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع النظام</label>
+                        <select id="systemType">
+                            <option value="financial">مالي</option>
+                            <option value="production">إنتاجي</option>
+                            <option value="family">عائلي</option>
+                            <option value="personal">شخصي</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="addSystem()">➕ إنشاء نظام</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="systemsTable">
+                    <thead><tr><th>المعرف</th><th>الاسم</th><th>النوع</th><th>تاريخ الإنشاء</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- تبويب سجل الأحداث -->
+        <div id="auditTab" class="tab-content">
+            <div class="search-box">
+                <input type="text" id="searchAuditUser" placeholder="بحث برقم العضوية..." onkeyup="filterAudit()">
+                <select id="filterAuditAction" onchange="filterAudit()">
+                    <option value="all">جميع الإجراءات</option>
+                    <option value="add">إضافة</option>
+                    <option value="edit">تعديل</option>
+                    <option value="confirm">تأكيد</option>
+                    <option value="objection">اعتراض</option>
+                    <option value="login">دخول</option>
+                </select>
+            </div>
+            <div class="table-wrapper">
+                <table id="auditTable">
+                    <thead><tr><th>المستخدم</th><th>الإجراء</th><th>النوع</th><th>التفاصيل</th><th>التاريخ</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { supabase, addAuditLog } from './supabase.js';
+        
+        let currentAdmin = 'ADMIN001';
+        let allTransactions = [];
+        let allProductions = [];
+        let allObjections = [];
+        let allRecurring = [];
+        let allMembers = [];
+        let allSystems = [];
+        let allAuditLogs = [];
+        
+        // تسجيل الدخول
+        async function initAdmin() {
+            const adminName = localStorage.getItem('memberName') || 'المدير العام';
+            document.getElementById('adminName').innerText = adminName;
+            await loadAllData();
+        }
+        
+        async function loadAllData() {
+            await loadTransactions();
+            await loadProductions();
+            await loadObjections();
+            await loadRecurring();
+            await loadMembers();
+            await loadSystems();
+            await loadAuditLogs();
+        }
+        
+        // تحميل المعاملات
+        async function loadTransactions() {
+            const { data, error } = await supabase.from('transactions').select('*, members(name)').order('date', { ascending: false });
+            if (!error) {
+                allTransactions = data;
+                filterTransactions();
+            }
+        }
+        
+        function filterTransactions() {
+            const search = document.getElementById('searchMemberTrans')?.value.toLowerCase() || '';
+            const status = document.getElementById('filterStatusTrans')?.value || 'all';
+            let filtered = allTransactions;
+            if (search) filtered = filtered.filter(t => t.member_id?.toLowerCase().includes(search));
+            if (status !== 'all') filtered = filtered.filter(t => t.status === status);
+            
+            // الإحصائيات
+            document.getElementById('statPending').innerText = allTransactions.filter(t => t.status === 'pending').length;
+            document.getElementById('statUnderReview').innerText = allTransactions.filter(t => t.status === 'under_review').length;
+            document.getElementById('statApproved').innerText = allTransactions.filter(t => t.status === 'approved').length;
+            
+            const tbody = document.querySelector('#transactionsTable tbody');
+            tbody.innerHTML = filtered.map(t => `
+                <tr>
+                    <td>${t.member_id}</td>
+                    <td>${t.description || '-'}</td>
+                    <td>${t.amount?.toLocaleString()} ريال</td>
+                    <td>${t.category || '-'}</td>
+                    <td>${t.date}</td>
+                    <td><span class="badge badge-${t.status}">${getStatusText(t.status)}</span></td>
+                    <td>
+                        ${t.status === 'pending' ? `<button class="btn-sm btn-success" onclick="reviewTransaction(${t.id}, 'approve')">تأكيد</button>` : ''}
+                        ${t.status === 'under_review' ? `<button class="btn-sm btn-success" onclick="reviewTransaction(${t.id}, 'approve')">موافقة</button>` : ''}
+                        ${t.status === 'pending' || t.status === 'under_review' ? `<button class="btn-sm btn-danger" onclick="reviewTransaction(${t.id}, 'reject')">رفض</button>` : ''}
+                        <button class="btn-sm btn-warning" onclick="editTransaction(${t.id})">تعديل</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        window.filterTransactions = filterTransactions;
+        
+        window.reviewTransaction = async function(id, action) {
+            const reason = action === 'reject' ? prompt('سبب الرفض:') : null;
+            const newStatus = action === 'approve' ? 'approved' : 'rejected';
+            const { error } = await supabase.from('transactions').update({ 
+                status: newStatus, 
+                approval_status: newStatus,
+                confirmed_by: currentAdmin,
+                confirmed_at: new Date().toISOString(),
+                reject_reason: reason
+            }).eq('id', id);
+            
+            if (!error) {
+                await addAuditLog({ user_id: currentAdmin, action: action, target_type: 'transaction', target_id: id, new_value: newStatus });
+                await loadTransactions();
+                alert(`تم ${action === 'approve' ? 'تأكيد' : 'رفض'} المعاملة بنجاح`);
+            }
+        }
+        
+        window.editTransaction = async function(id) {
+            const newAmount = prompt('المبلغ الجديد:');
+            if (newAmount) {
+                await supabase.from('transactions').update({ amount: parseFloat(newAmount) }).eq('id', id);
+                await addAuditLog({ user_id: currentAdmin, action: 'edit', target_type: 'transaction', target_id: id, new_value: newAmount });
+                await loadTransactions();
+            }
+        }
+        
+        window.addTransaction = async function() {
+            const memberId = document.getElementById('transMemberId').value;
+            const description = document.getElementById('transDesc').value;
+            const amount = document.getElementById('transAmount').value;
+            const category = document.getElementById('transCategory').value;
+            if (!memberId || !description || !amount) return alert('املأ جميع الحقول');
+            await supabase.from('transactions').insert([{
+                id: Date.now(), member_id: memberId, amount: parseFloat(amount),
+                description, category, date: new Date().toISOString().split('T')[0],
+                status: 'pending', created_by: currentAdmin
+            }]);
+            await addAuditLog({ user_id: currentAdmin, action: 'add', target_type: 'transaction', new_value: description });
+            await loadTransactions();
+            document.getElementById('transMemberId').value = '';
+            document.getElementById('transDesc').value = '';
+            document.getElementById('transAmount').value = '';
+            document.getElementById('transCategory').value = '';
+            alert('تمت الإضافة');
+        }
+        
+        // تحميل الإنتاج
+        async function loadProductions() {
+            const { data, error } = await supabase.from('productions').select('*, members(name)').order('date', { ascending: false });
+            if (!error) {
+                allProductions = data;
+                const tbody = document.querySelector('#productionsTable tbody');
+                tbody.innerHTML = allProductions.map(p => `
+                    <tr>
+                        <td>${p.member_id}</td>
+                        <td>${p.product_name}</td>
+                        <td>${p.model || '-'}</td>
+                        <td>${p.quantity}</td>
+                        <td>${p.price ? p.price.toLocaleString() + ' ريال' : 'غير محدد'}</td>
+                        <td>${p.date}</td>
+                        <td><span class="badge badge-${p.status}">${p.status === 'approved' ? 'مؤكد' : 'قيد المراجعة'}</span></td>
+                        <td>
+                            ${p.status === 'pending' ? `<button class="btn-sm btn-success" onclick="confirmProduction(${p.id})">تأكيد</button>` : ''}
+                            <button class="btn-sm btn-warning" onclick="editProduction(${p.id})">تعديل السعر</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        window.confirmProduction = async function(id) {
+            await supabase.from('productions').update({ status: 'approved', confirmed_by: currentAdmin }).eq('id', id);
+            await addAuditLog({ user_id: currentAdmin, action: 'confirm', target_type: 'production', target_id: id });
+            await loadProductions();
+            alert('تم تأكيد الإنتاج');
+        }
+        
+        window.editProduction = async function(id) {
+            const price = prompt('السعر الجديد:');
+            if (price !== null) {
+                await supabase.from('productions').update({ price: parseFloat(price) || null }).eq('id', id);
+                await loadProductions();
+            }
+        }
+        
+        window.addProduction = async function() {
+            const memberId = document.getElementById('prodMemberId').value;
+            const productName = document.getElementById('prodName').value;
+            const quantity = document.getElementById('prodQuantity').value;
+            if (!memberId || !productName || !quantity) return alert('املأ الحقول المطلوبة');
+            await supabase.from('productions').insert([{
+                id: Date.now(), member_id: memberId, product_name: productName,
+                model: document.getElementById('prodModel').value,
+                quantity: parseInt(quantity), price: parseFloat(document.getElementById('prodPrice').value) || null,
+                date: new Date().toISOString().split('T')[0], status: 'pending', created_by: currentAdmin
+            }]);
+            await loadProductions();
+            alert('تمت الإضافة');
+        }
+        
+        // تحميل الاعتراضات
+        async function loadObjections() {
+            const { data, error } = await supabase.from('objections').select('*, members(name)').order('date', { ascending: false });
+            if (!error) {
+                allObjections = data;
+                const tbody = document.querySelector('#objectionsTable tbody');
+                tbody.innerHTML = allObjections.map(o => `
+                    <tr>
+                        <td>${o.member_id}</td>
+                        <td>${o.members?.name || '-'}</td>
+                        <td>${o.transaction_id ? 'معاملة' : 'إنتاج'}</td>
+                        <td style="max-width:250px;">${o.reason}</td>
+                        <td>${new Date(o.date).toLocaleDateString('ar-EG')}</td>
+                        <td><span class="badge badge-${o.status}">${o.status === 'pending' ? 'قيد المعالجة' : 'تم الرد'}</span></td>
+                        <td>${o.status === 'pending' ? `<button class="btn-sm btn-success" onclick="resolveObjection(${o.id})">معالجة</button>` : ''}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        window.resolveObjection = async function(id) {
+            const response = prompt('ردك على الاعتراض:');
+            if (response) {
+                await supabase.from('objections').update({ status: 'resolved', resolved_by: currentAdmin, resolved_at: new Date(), response }).eq('id', id);
+                await loadObjections();
+                alert('تم معالجة الاعتراض');
+            }
+        }
+        
+        // تحميل التكرار
+        async function loadRecurring() {
+            const { data, error } = await supabase.from('recurring_settings').select('*, members(name)');
+            if (!error) {
+                allRecurring = data;
+                const tbody = document.querySelector('#recurringTable tbody');
+                tbody.innerHTML = allRecurring.map(r => `
+                    <tr>
+                        <td>${r.member_id}</td>
+                        <td>${r.description}</td>
+                        <td>${r.amount?.toLocaleString()} ريال</td>
+                        <td>${r.type === 'daily' ? 'يومي' : 'أسبوعي'}</td>
+                        <td>${r.category || '-'}</td>
+                        <td><span class="badge badge-${r.status}">${r.status === 'active' ? 'نشط' : 'موقوف'}</span></td>
+                        <td>
+                            <button class="btn-sm btn-warning" onclick="toggleRecurring(${r.id}, '${r.status}')">${r.status === 'active' ? 'إيقاف' : 'تشغيل'}</button>
+                            <button class="btn-sm btn-danger" onclick="deleteRecurring(${r.id})">حذف</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        window.addRecurring = async function() {
+            const memberId = document.getElementById('recMemberId').value;
+            const description = document.getElementById('recDesc').value;
+            const amount = document.getElementById('recAmount').value;
+            if (!memberId || !description || !amount) return alert('املأ الحقول');
+            await supabase.from('recurring_settings').insert([{
+                id: Date.now(), member_id: memberId, description, amount: parseFloat(amount),
+                type: document.getElementById('recType').value, category: document.getElementById('recCategory').value,
+                status: 'active', created_by: currentAdmin
+            }]);
+            await loadRecurring();
+            alert('تمت الإضافة');
+        }
+        
+        window.toggleRecurring = async function(id, status) {
+            const newStatus = status === 'active' ? 'inactive' : 'active';
+            await supabase.from('recurring_settings').update({ status: newStatus }).eq('id', id);
+            await loadRecurring();
+        }
+        
+        window.deleteRecurring = async function(id) {
+            if (confirm('تأكيد الحذف؟')) {
+                await supabase.from('recurring_settings').delete().eq('id', id);
+                await loadRecurring();
+            }
+        }
+        
+        // تحميل الأعضاء
+        async function loadMembers() {
+            const { data, error } = await supabase.from('members').select('*').order('name');
+            if (!error) {
+                allMembers = data;
+                const tbody = document.querySelector('#membersTable tbody');
+                tbody.innerHTML = allMembers.map(m => `
+                    <tr>
+                        <td>${m.id}</td>
+                        <td>${m.name}</td>
+                        <td><span class="badge badge-approved">${m.role === 'admin' ? 'مدير' : m.role === 'auditor' ? 'مراجع' : m.role === 'tailor' ? 'خياط' : 'موظف'}</span></td>
+                        <td>${new Date(m.join_date).toLocaleDateString('ar-EG')}</td>
+                        <td>${m.system_id || 'default'}</td>
+                        <td>${m.role !== 'admin' ? `<button class="btn-sm btn-danger" onclick="deleteMember('${m.id}')">حذف</button>` : '-'}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        window.addNewMember = async function() {
+            const id = document.getElementById('newMemberId').value;
+            const name = document.getElementById('newMemberName').value;
+            const role = document.getElementById('newMemberRole').value;
+            if (!id || !name) return alert('املأ الحقول');
+            await supabase.from('members').insert([{ id, name, role, join_date: new Date().toISOString() }]);
+            await loadMembers();
+            alert('تمت الإضافة');
+        }
+        
+        window.deleteMember = async function(id) {
+            if (confirm('تأكيد الحذف؟')) {
+                await supabase.from('members').delete().eq('id', id);
+                await loadMembers();
+            }
+        }
+        
+        // تحميل الأنظمة
+        async function loadSystems() {
+            const { data, error } = await supabase.from('systems').select('*').order('created_at', { ascending: false });
+            if (!error) {
+                allSystems = data;
+                const tbody = document.querySelector('#systemsTable tbody');
+                tbody.innerHTML = allSystems.map(s => `
+                    <tr>
+                        <td>${s.id}</td>
+                        <td>${s.name}</td>
+                        <td>${s.type === 'financial' ? 'مالي' : s.type === 'production' ? 'إنتاجي' : s.type === 'family' ? 'عائلي' : 'شخصي'}</td>
+                        <td>${new Date(s.created_at).toLocaleDateString('ar-EG')}</td>
+                        <td><span class="badge badge-${s.is_active ? 'approved' : 'rejected'}">${s.is_active ? 'نشط' : 'موقوف'}</span></td>
+                        <td>
+                            <button class="btn-sm btn-warning" onclick="toggleSystem('${s.id}', ${s.is_active})">${s.is_active ? 'إيقاف' : 'تفعيل'}</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        window.addSystem = async function() {
+            const id = document.getElementById('systemId').value;
+            const name = document.getElementById('systemName').value;
+            const type = document.getElementById('systemType').value;
+            if (!id || !name) return alert('املأ الحقول');
+            await supabase.from('systems').insert([{ id, name, type, created_by: currentAdmin, created_at: new Date(), is_active: true }]);
+            await loadSystems();
+            alert('تم إنشاء النظام');
+        }
+        
+        window.toggleSystem = async function(id, current) {
+            await supabase.from('systems').update({ is_active: !current }).eq('id', id);
+            await loadSystems();
+        }
+        
+        // تحميل سجل الأحداث
+        async function loadAuditLogs() {
+            const { data, error } = await supabase.from('audit_log').select('*, members(name)').order('created_at', { ascending: false }).limit(200);
+            if (!error) {
+                allAuditLogs = data;
+                filterAudit();
+            }
+        }
+        
+        function filterAudit() {
+            const search = document.getElementById('searchAuditUser')?.value.toLowerCase() || '';
+            const action = document.getElementById('filterAuditAction')?.value || 'all';
+            let filtered = allAuditLogs;
+            if (search) filtered = filtered.filter(a => a.user_id?.toLowerCase().includes(search));
+            if (action !== 'all') filtered = filtered.filter(a => a.action === action);
+            const tbody = document.querySelector('#auditTable tbody');
+            tbody.innerHTML = filtered.map(a => `
+                <tr>
+                    <td>${a.user_id} (${a.members?.name || '-'})</td>
+                    <td>${a.action === 'add' ? 'إضافة' : a.action === 'edit' ? 'تعديل' : a.action === 'confirm' ? 'تأكيد' : a.action === 'objection' ? 'اعتراض' : 'دخول'}</td>
+                    <td>${a.target_type || '-'}</td>
+                    <td>${a.new_value ? (a.new_value.length > 50 ? a.new_value.substring(0, 50) + '...' : a.new_value) : '-'}</td>
+                    <td>${new Date(a.created_at).toLocaleString('ar-EG')}</td>
+                </tr>
+            `).join('');
+        }
+        
+        window.filterAudit = filterAudit;
+        
+        function getStatusText(status) {
+            const map = { 'pending': 'قيد المراجعة', 'under_review': 'مراجعة المشرف', 'approved': 'مؤكد', 'rejected': 'مرفوض' };
+            return map[status] || status;
+        }
+        
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`${tab}Tab`).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+        window.logout = logout;
+        
+        initAdmin();
+    </script>
+</body>
+</html>
