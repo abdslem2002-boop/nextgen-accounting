@@ -9,13 +9,14 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ==================== الأعضاء ====================
 export async function getMemberById(id) {
+    // استخدم maybeSingle() بدلاً من single() لتفادي الخطأ عندما لا يوجد عضو
     const { data, error } = await supabase
         .from('members')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
     if (error) throw error;
-    return data;
+    return data; // سترجع null إذا لم يتم العثور على العضو
 }
 
 export async function getAllMembers() {
