@@ -256,11 +256,14 @@
                 localStorage.setItem('systemId', member.system_id || 'default');
                 
                 // التوجيه حسب الدور
-                if (member.role === 'admin') {
-                    window.location.href = 'admin.html';
-                } else {
-                    window.location.href = 'dashboard.html';
-                }
+               
+if (member.role === 'admin') {
+    window.location.href = 'admin.html';
+} else if (member.role === 'auditor') {
+    window.location.href = 'auditor.html';
+} else {
+    window.location.href = 'dashboard.html';
+}
                 
             } catch (error) {
                 console.error('خطأ:', error);
