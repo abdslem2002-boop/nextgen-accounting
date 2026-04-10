@@ -1,0 +1,152 @@
+-- ================================================
+-- حذف الجداول القديمة (إذا كانت موجودة) لتجنب التعارض
+-- ================================================
+DROP TABLE IF EXISTS audit_log CASCADE;
+DROP TABLE IF EXISTS objections CASCADE;
+DROP TABLE IF EXISTS recurring_settings CASCADE;
+DROP TABLE IF EXISTS productions CASCADE;
+DROP TABLE IF EXISTS transactions CASCADE;
+DROP TABLE IF EXISTS members CASCADE;
+DROP TABLE IF EXISTS systems CASCADE;
+
+-- ================================================
+-- 1. جدول الأنظمة (للمستأجرين المتعددين)
+-- ================================================
+CREATE TABLE systems (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    type TEXT CHECK (type IN ('financial', 'production', 'family', 'personal')),
+    created_by TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT true
+);
+
+-- ================================================
+-- 2. جدول الأعضاء
+-- ================================================
+CREATE TABLE members (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    role TEXT CHECK (role IN ('admin', 'auditor', 'employee', 'tailor')),
+    system_id TEXT DEFAULT 'default' REFERENCES systems(id),
+    join_date DATE DEFAULT CURRENT_DATE,
+    is_active BOOLEAN DEFAULT true
+);
+
+-- ================================================
+-- 3. جدول المعاملات المالية
+-- ================================================
+CREATE TABLE transactions (
+    id BIGINT PRIMARY KEY,
+    member_id TEXT REFERENCES members(id) ON DELETE CASCADE,
+    amount DECIMAL(10, 2) NOT NULL,
+    description TEXT,
+    category TEXT,
+    type TEXT,
+    date DATE NOT NULL,
+    status TEXT CHECK (status IN ('pending', 'under_review', 'approved', 'rejected')) DEFAULT 'pending',
+    approval_status TEXT,
+    confirmed_by TEXT,
+    confirmed_at TIMESTAMP WITH TIME ZONE,
+    reject_reason TEXT,
+    created_by TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ================================================
+-- 4. جدول إنتاج الخياطين
+-- ================================================
+CREATE TABLE productions (
+    id BIGINT PRIMARY KEY,
+    member_id TEXT REFERENCES members(id) ON DELETE CASCADE,
+    product_name TEXT NOT NULL,
+    model TEXT,
+    quantity INTEGER NOT NULL,
+    price DECIMAL(10, 2),
+    date DATE NOT NULL,
+    status TEXT CHECK (status IN ('pending', 'approved')) DEFAULT 'pending',
+    confirmed_by TEXT,
+    created_by TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ================================================
+-- 5. جدول الاعتراضات
+-- ================================================
+CREATE TABLE objections (
+    id BIGINT PRIMARY KEY,
+    member_id TEXT REFERENCES members(id) ON DELETE CASCADE,
+    transaction_id BIGINT REFERENCES transactions(id) ON DELETE CASCADE,
+    production_id BIGINT REFERENCES productions(id) ON DELETE CASCADE,
+    reason TEXT NOT NULL,
+    date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    status TEXT CHECK (status IN ('pending', 'resolved')) DEFAULT 'pending',
+    resolved_by TEXT,
+    resolved_at TIMESTAMP WITH TIME ZONE,
+    response TEXT
+);
+
+-- ================================================
+-- 6. جدول إعدادات التكرار التلقائي
+-- ================================================
+CREATE TABLE recurring_settings (
+    id BIGINT PRIMARY KEY,
+    member_id TEXT REFERENCES members(id) ON DELETE CASCADE,
+    description TEXT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    type TEXT CHECK (type IN ('daily', 'weekly')),
+    category TEXT,
+    status TEXT CHECK (status IN ('active', 'inactive')) DEFAULT 'active',
+    last_run DATE,
+    created_by TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ================================================
+-- 7. جدول سجل الأحداث
+-- ================================================
+CREATE TABLE audit_log (
+    id BIGSERIAL PRIMARY KEY,
+    user_id TEXT REFERENCES members(id) ON DELETE SET NULL,
+    action TEXT NOT NULL,
+    target_type TEXT,
+    target_id BIGINT,
+    old_value TEXT,
+    new_value TEXT,
+    ip_address TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ================================================
+-- إدراج البيانات الافتراضية تلقائياً (لا حاجة للإدخال اليدوي)
+-- ================================================
+
+-- 1. إدراج النظام الافتراضي
+INSERT INTO systems (id, name, type) VALUES ('default', 'النظام الرئيسي', 'financial');
+
+-- 2. إدراج الأعضاء الافتراضيين
+INSERT INTO members (id, name, role, system_id) VALUES
+('ADMIN001', 'المدير العام', 'admin', 'default'),
+('AUDITOR001', 'مراجع الحسابات', 'auditor', 'default'),
+('M001', 'موظف تجريبي', 'employee', 'default'),
+('M002', 'خياط تجريبي', 'tailor', 'default');
+
+-- ================================================
+-- تفعيل أمان مستوى الصف (RLS) وسياسات مبسطة
+-- ================================================
+ALTER TABLE systems ENABLE ROW LEVEL SECURITY;
+ALTER TABLE members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE productions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE objections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE recurring_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
+
+-- سياسات تسمح بالوصول الكامل (للتجربة - يمكنك تقييدها لاحقاً)
+CREATE POLICY "Allow all for authenticated users" ON systems FOR ALL USING (true);
+CREATE POLICY "Allow all for authenticated users" ON members FOR ALL USING (true);
+CREATE POLICY "Allow all for authenticated users" ON transactions FOR ALL USING (true);
+CREATE POLICY "Allow all for authenticated users" ON productions FOR ALL USING (true);
+CREATE POLICY "Allow all for authenticated users" ON objections FOR ALL USING (true);
+CREATE POLICY "Allow all for authenticated users" ON recurring_settings FOR ALL USING (true);
+CREATE POLICY "Allow all for authenticated users" ON audit_log FOR ALL USING (true);
