@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المراجع - نظام المحاسبة</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            background: #f0f2f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3a5f, #0a2f44);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .logo h2 { font-size: 22px; }
+        .logo span { font-size: 12px; opacity: 0.8; }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 14px;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 25px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .stat-card .icon { font-size: 36px; margin-bottom: 10px; }
+        .stat-card h3 { color: #666; font-size: 14px; margin-bottom: 8px; }
+        .stat-card .value { font-size: 28px; font-weight: bold; color: #1e3a5f; }
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 35px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        .section-title {
+            font-size: 20px;
+            color: #1e3a5f;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .table-wrapper { overflow-x: auto; border-radius: 15px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #f8f9fa; color: #1e3a5f; padding: 12px; text-align: right; }
+        td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .badge-pending { background: #ffc107; color: #000; }
+        .badge-approved { background: #28a745; color: white; }
+        .badge-rejected { background: #dc3545; color: white; }
+        .btn-sm {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 2px;
+        }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: #000; }
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .search-box input, .search-box select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            flex: 1;
+            min-width: 180px;
+        }
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            margin: 15px 0;
+            font-family: inherit;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .btn-primary {
+            background: #1e3a5f;
+            color: white;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <h2>🔍 نظام المحاسبة - لوحة المراجع</h2>
+            <span>الإصدار الثاني | مراجعة وتدقيق</span>
+        </div>
+        <div class="user-info">
+            <span class="user-badge">👤 <span id="auditorName"></span></span>
+            <span class="user-badge">⭐ مراجع حسابات</span>
+            <button class="logout-btn" onclick="logout()">🚪 خروج</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">⏳</div>
+                <h3>معاملات بانتظار المراجعة</h3>
+                <div class="value" id="pendingTrans">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">✅</div>
+                <h3>معاملات مؤكدة</h3>
+                <div class="value" id="approvedTrans">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🧵</div>
+                <h3>إنتاجات بانتظار المراجعة</h3>
+                <div class="value" id="pendingProd">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">✋</div>
+                <h3>اعتراضات مفتوحة</h3>
+                <div class="value" id="openObjections">0</div>
+            </div>
+        </div>
+        
+        <!-- تبويب المعاملات -->
+        <div class="section">
+            <div class="section-title"><span>📋</span> جميع المعاملات المالية</div>
+            <div class="search-box">
+                <input type="text" id="searchTrans" placeholder="بحث برقم العضوية أو الوصف..." onkeyup="filterTransactions()">
+                <select id="filterStatus" onchange="filterTransactions()">
+                    <option value="all">جميع الحالات</option>
+                    <option value="pending">قيد المراجعة</option>
+                    <option value="under_review">مراجعة المشرف</option>
+                    <option value="approved">مؤكد</option>
+                    <option value="rejected">مرفوض</option>
+                </select>
+            </div>
+            <div class="table-wrapper">
+                <table id="transactionsTable">
+                    <thead><tr><th>رقم العضوية</th><th>الوصف</th><th>المبلغ</th><th>التصنيف</th><th>التاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- تبويب الإنتاج -->
+        <div class="section">
+            <div class="section-title"><span>🧵</span> إنتاج الخياطين</div>
+            <div class="table-wrapper">
+                <table id="productionsTable">
+                    <thead><tr><th>رقم العضوية</th><th>المنتج</th><th>الموديل</th><th>الكمية</th><th>السعر</th><th>التاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- تبويب الاعتراضات -->
+        <div class="section">
+            <div class="section-title"><span>✋</span> الاعتراضات المقدمة</div>
+            <div class="table-wrapper">
+                <table id="objectionsTable">
+                    <thead><tr><th>رقم العضوية</th><th>النوع</th><th>السبب</th><th>التاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- تبويب سجل الأحداث -->
+        <div class="section">
+            <div class="section-title"><span>📜</span> سجل الأحداث (آخر 100 عملية)</div>
+            <div class="table-wrapper">
+                <table id="auditTable">
+                    <thead><tr><th>المستخدم</th><th>الإجراء</th><th>النوع</th><th>التفاصيل</th><th>التاريخ</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- مودال الرد على الاعتراض -->
+    <div id="responseModal" class="modal">
+        <div class="modal-content">
+            <h3>📝 الرد على الاعتراض</h3>
+            <label>سبب الاعتراض:</label>
+            <p id="objReasonDisplay" style="background:#f5f5f5; padding:10px; border-radius:10px; margin:10px 0;"></p>
+            <label>رد المراجع:</label>
+            <textarea id="objResponse" rows="3" placeholder="اكتب ردك هنا..."></textarea>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeModal()">إلغاء</button>
+                <button class="btn-primary" onclick="submitResponse()">إرسال الرد</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase, addAuditLog } from './supabase.js';
+        
+        let currentAuditorId = '';
+        let currentAuditorName = '';
+        let allTransactions = [];
+        let allProductions = [];
+        let allObjections = [];
+        let currentObjectionId = null;
+        
+        // تهيئة الصفحة
+        async function initAuditor() {
+            currentAuditorId = localStorage.getItem('memberId') || 'AUDITOR001';
+            currentAuditorName = localStorage.getItem('memberName') || 'مراجع الحسابات';
+            document.getElementById('auditorName').innerText = currentAuditorName;
+            
+            await loadAllData();
+        }
+        
+        async function loadAllData() {
+            await loadTransactions();
+            await loadProductions();
+            await loadObjections();
+            await loadAuditLogs();
+        }
+        
+        // تحميل المعاملات
+        async function loadTransactions() {
+            const { data, error } = await supabase
+                .from('transactions')
+                .select('*, members(name)')
+                .order('date', { ascending: false });
+            if (!error) {
+                allTransactions = data || [];
+                updateStats();
+                filterTransactions();
+            }
+        }
+        
+        function updateStats() {
+            document.getElementById('pendingTrans').innerText = allTransactions.filter(t => t.status === 'pending' || t.status === 'under_review').length;
+            document.getElementById('approvedTrans').innerText = allTransactions.filter(t => t.status === 'approved').length;
+        }
+        
+        window.filterTransactions = function() {
+            const search = document.getElementById('searchTrans')?.value.toLowerCase() || '';
+            const status = document.getElementById('filterStatus')?.value || 'all';
+            let filtered = allTransactions;
+            if (search) filtered = filtered.filter(t => t.member_id?.toLowerCase().includes(search) || t.description?.toLowerCase().includes(search));
+            if (status !== 'all') filtered = filtered.filter(t => t.status === status);
+            
+            const statusMap = { 'pending': 'قيد المراجعة', 'under_review': 'مراجعة المشرف', 'approved': 'مؤكد', 'rejected': 'مرفوض' };
+            const tbody = document.querySelector('#transactionsTable tbody');
+            tbody.innerHTML = filtered.map(t => `
+                <tr>
+                    <td>${t.member_id} (${t.members?.name || ''})</td>
+                    <td>${t.description || '-'}</td>
+                    <td>${t.amount?.toLocaleString()} ريال</td>
+                    <td>${t.category || '-'}</td>
+                    <td>${t.date}</td>
+                    <td><span class="badge badge-${t.status === 'approved' ? 'approved' : (t.status === 'rejected' ? 'rejected' : 'pending')}">${statusMap[t.status] || t.status}</span></td>
+                    <td>
+                        ${t.status === 'pending' || t.status === 'under_review' ? 
+                            `<button class="btn-sm btn-success" onclick="confirmTransaction(${t.id})">تأكيد</button>
+                             <button class="btn-sm btn-danger" onclick="rejectTransaction(${t.id})">رفض</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        };
+        
+        window.confirmTransaction = async function(id) {
+            if (!confirm('تأكيد هذه المعاملة؟')) return;
+            const { error } = await supabase.from('transactions').update({ 
+                status: 'approved', 
+                approval_status: 'approved',
+                confirmed_by: currentAuditorId,
+                confirmed_at: new Date().toISOString()
+            }).eq('id', id);
+            if (!error) {
+                await addAuditLog({ user_id: currentAuditorId, action: 'confirm', target_type: 'transaction', target_id: id, new_value: 'approved' });
+                await loadTransactions();
+            } else alert('حدث خطأ');
+        };
+        
+        window.rejectTransaction = async function(id) {
+            const reason = prompt('سبب الرفض:');
+            if (reason === null) return;
+            const { error } = await supabase.from('transactions').update({ 
+                status: 'rejected', 
+                reject_reason: reason,
+                confirmed_by: currentAuditorId,
+                confirmed_at: new Date().toISOString()
+            }).eq('id', id);
+            if (!error) {
+                await addAuditLog({ user_id: currentAuditorId, action: 'reject', target_type: 'transaction', target_id: id, new_value: reason });
+                await loadTransactions();
+            } else alert('حدث خطأ');
+        };
+        
+        // تحميل الإنتاج
+        async function loadProductions() {
+            const { data, error } = await supabase
+                .from('productions')
+                .select('*, members(name)')
+                .order('date', { ascending: false });
+            if (!error) {
+                allProductions = data || [];
+                document.getElementById('pendingProd').innerText = allProductions.filter(p => p.status === 'pending').length;
+                const tbody = document.querySelector('#productionsTable tbody');
+                tbody.innerHTML = allProductions.map(p => `
+                    <tr>
+                        <td>${p.member_id} (${p.members?.name || ''})</td>
+                        <td>${p.product_name}</td>
+                        <td>${p.model || '-'}</td>
+                        <td>${p.quantity}</td>
+                        <td>${p.price ? p.price.toLocaleString() + ' ريال' : 'غير محدد'}</td>
+                        <td>${p.date}</td>
+                        <td><span class="badge badge-${p.status === 'approved' ? 'approved' : 'pending'}">${p.status === 'approved' ? 'مؤكد' : 'قيد المراجعة'}</span></td>
+                        <td>
+                            ${p.status === 'pending' ? 
+                                `<button class="btn-sm btn-success" onclick="confirmProduction(${p.id})">تأكيد</button>` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        window.confirmProduction = async function(id) {
+            if (!confirm('تأكيد هذا الإنتاج؟')) return;
+            const { error } = await supabase.from('productions').update({ 
+                status: 'approved', 
+                confirmed_by: currentAuditorId 
+            }).eq('id', id);
+            if (!error) {
+                await addAuditLog({ user_id: currentAuditorId, action: 'confirm', target_type: 'production', target_id: id });
+                await loadProductions();
+            }
+        };
+        
+        // تحميل الاعتراضات
+        async function loadObjections() {
+            const { data, error } = await supabase
+                .from('objections')
+                .select('*, members(name)')
+                .order('date', { ascending: false });
+            if (!error) {
+                allObjections = data || [];
+                document.getElementById('openObjections').innerText = allObjections.filter(o => o.status === 'pending').length;
+                const tbody = document.querySelector('#objectionsTable tbody');
+                tbody.innerHTML = allObjections.map(o => `
+                    <tr>
+                        <td>${o.member_id} (${o.members?.name || ''})</td>
+                        <td>${o.transaction_id ? 'معاملة' : 'إنتاج'}</td>
+                        <td>${o.reason.length > 40 ? o.reason.substring(0,40)+'...' : o.reason}</td>
+                        <td>${new Date(o.date).toLocaleDateString('ar-EG')}</td>
+                        <td><span class="badge badge-${o.status === 'pending' ? 'pending' : 'approved'}">${o.status === 'pending' ? 'مفتوح' : 'تم الرد'}</span></td>
+                        <td>
+                            ${o.status === 'pending' ? 
+                                `<button class="btn-sm btn-warning" onclick="openResponseModal(${o.id}, '${o.reason.replace(/'/g, "\\'")}')">رد</button>` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        window.openResponseModal = function(id, reason) {
+            currentObjectionId = id;
+            document.getElementById('objReasonDisplay').innerText = reason;
+            document.getElementById('objResponse').value = '';
+            document.getElementById('responseModal').style.display = 'flex';
+        };
+        
+        window.submitResponse = async function() {
+            const response = document.getElementById('objResponse').value;
+            if (!response) { alert('الرجاء كتابة رد'); return; }
+            const { error } = await supabase.from('objections').update({
+                status: 'resolved',
+                resolved_by: currentAuditorId,
+                resolved_at: new Date().toISOString(),
+                response: response
+            }).eq('id', currentObjectionId);
+            if (!error) {
+                await addAuditLog({ user_id: currentAuditorId, action: 'resolve', target_type: 'objection', target_id: currentObjectionId, new_value: response });
+                await loadObjections();
+                closeModal();
+            }
+        };
+        
+        window.closeModal = function() {
+            document.getElementById('responseModal').style.display = 'none';
+            currentObjectionId = null;
+        };
+        
+        // سجل الأحداث
+        async function loadAuditLogs() {
+            const { data, error } = await supabase
+                .from('audit_log')
+                .select('*, members(name)')
+                .order('created_at', { ascending: false })
+                .limit(100);
+            if (!error) {
+                const tbody = document.querySelector('#auditTable tbody');
+                tbody.innerHTML = (data || []).map(a => `
+                    <tr>
+                        <td>${a.user_id} (${a.members?.name || ''})</td>
+                        <td>${a.action === 'add' ? 'إضافة' : a.action === 'confirm' ? 'تأكيد' : a.action === 'reject' ? 'رفض' : a.action === 'objection' ? 'اعتراض' : a.action}</td>
+                        <td>${a.target_type || '-'}</td>
+                        <td>${a.new_value ? (a.new_value.length > 40 ? a.new_value.substring(0,40)+'...' : a.new_value) : '-'}</td>
+                        <td>${new Date(a.created_at).toLocaleString('ar-EG')}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+        window.logout = logout;
+        
+        initAuditor();
+    </script>
+</body>
+</html>
