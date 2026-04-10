@@ -22,7 +22,6 @@
             overflow-x: hidden;
         }
         
-        /* خلفية متحركة */
         body::before {
             content: '';
             position: absolute;
@@ -132,12 +131,16 @@
         
         .error {
             color: #dc3545;
-            margin-top: 10px;
+            margin-top: 15px;
             font-size: 14px;
-            padding: 10px;
+            padding: 12px;
             background: #ffe6e6;
-            border-radius: 8px;
+            border-radius: 10px;
             display: none;
+            white-space: pre-line;
+            text-align: right;
+            border: 1px solid #f5c2c2;
+            word-wrap: break-word;
         }
         
         .info {
@@ -237,14 +240,14 @@
                     return;
                 }
                 
-                // تسجيل حدث الدخول
-                await addAuditLog({
+                // تسجيل حدث الدخول (لن يؤثر الفشل هنا على نجاح الدخول)
+                addAuditLog({
                     user_id: member.id,
                     action: 'login',
                     target_type: 'auth',
                     target_id: member.id,
                     ip_address: 'client'
-                });
+                }).catch(err => console.warn('تعذر تسجيل حدث الدخول:', err));
                 
                 // حفظ معلومات الجلسة
                 localStorage.setItem('memberId', member.id);
@@ -261,17 +264,42 @@
                 
             } catch (error) {
                 console.error('خطأ:', error);
-                showError('حدث خطأ في الاتصال بقاعدة البيانات');
+                
+                // بناء رسالة خطأ مفصلة لتظهر على الشاشة
+                let errorMessage = 'حدث خطأ في الاتصال بقاعدة البيانات';
+                
+                if (error.message) {
+                    errorMessage += '\n\n📌 ' + error.message;
+                }
+                if (error.details) {
+                    errorMessage += '\n📌 ' + error.details;
+                }
+                if (error.hint) {
+                    errorMessage += '\n💡 ' + error.hint;
+                }
+                if (error.code) {
+                    errorMessage += '\n🔢 رمز الخطأ: ' + error.code;
+                }
+                
+                // إذا كان الخطأ يتعلق بعدم وجود الجدول
+                if (error.message && error.message.includes('relation') && error.message.includes('does not exist')) {
+                    errorMessage += '\n\n⚠️ يبدو أن جداول قاعدة البيانات غير موجودة. الرجاء تنفيذ كود SQL أولاً.';
+                }
+                
+                showError(errorMessage);
             }
         });
         
         function showError(message) {
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 3000);
+            // لا نخفي الخطأ تلقائياً حتى يتمكن المستخدم من قراءته على الهاتف
         }
+        
+        // إخفاء الخطأ عند بدء الكتابة
+        memberIdInput.addEventListener('input', function() {
+            errorDiv.style.display = 'none';
+        });
     </script>
 </body>
 </html>
