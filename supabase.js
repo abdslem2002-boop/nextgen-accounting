@@ -1,207 +1,90 @@
-// supabase.js
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-const SUPABASE_URL = 'https://dcnldsccemjkhyknmrzq.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_6ikViMtsw7oGV3rS_3ut5g_cgJcKFTy';
-
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// ==================== الأعضاء ====================
-export async function getMemberById(id) {
-    const { data, error } = await supabase.from('members').select('*').eq('id', id).maybeSingle();
-    if (error) throw error;
-    return data;
-}
-export async function getAllMembers() {
-    const { data, error } = await supabase.from('members').select('*').order('name');
-    if (error) throw error;
-    return data;
-}
-export async function addMember(member) {
-    const { data, error } = await supabase.from('members').insert([{ ...member, join_date: new Date().toISOString() }]).select();
-    if (error) throw error;
-    return data[0];
-}
-export async function deleteMember(id) {
-    const { error } = await supabase.from('members').delete().eq('id', id);
-    if (error) throw error;
-    return true;
-}
-
-// ==================== المعاملات ====================
-export async function getTransactions(filters = {}) {
-    let query = supabase.from('transactions').select('*, members(name)').order('date', { ascending: false });
-    if (filters.member_id) query = query.eq('member_id', filters.member_id);
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
-}
-export async function addTransaction(transaction) {
-    const { data, error } = await supabase.from('transactions').insert([{
-        ...transaction,
-        id: Date.now(),
-        date: new Date().toISOString().split('T')[0],
-        status: 'pending'
-    }]).select();
-    if (error) throw error;
-    return data[0];
-}
-export async function updateTransaction(id, updates) {
-    const { data, error } = await supabase.from('transactions').update(updates).eq('id', id).select();
-    if (error) throw error;
-    return data[0];
-}
-
-// ==================== الإنتاج ====================
-export async function getProductions(filters = {}) {
-    let query = supabase.from('productions').select('*, members(name)').order('date', { ascending: false });
-    if (filters.member_id) query = query.eq('member_id', filters.member_id);
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
-}
-export async function addProduction(production) {
-    const { data, error } = await supabase.from('productions').insert([{
-        ...production,
-        id: Date.now(),
-        date: new Date().toISOString().split('T')[0],
-        status: 'pending'
-    }]).select();
-    if (error) throw error;
-    return data[0];
-}
-export async function updateProduction(id, updates) {
-    const { data, error } = await supabase.from('productions').update(updates).eq('id', id).select();
-    if (error) throw error;
-    return data[0];
-}
-
-// ==================== الاعتراضات ====================
-export async function getObjections(filters = {}) {
-    let query = supabase.from('objections').select('*, members(name)').order('date', { ascending: false });
-    if (filters.member_id) query = query.eq('member_id', filters.member_id);
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
-}
-export async function addObjection(objection) {
-    const { data, error } = await supabase.from('objections').insert([{
-        ...objection,
-        id: Date.now(),
-        date: new Date().toISOString(),
-        status: 'pending'
-    }]).select();
-    if (error) throw error;
-    return data[0];
-}
-export async function resolveObjection(id, resolution) {
-    const { data, error } = await supabase.from('objections').update({
-        status: 'resolved',
-        resolved_at: new Date().toISOString(),
-        ...resolution
-    }).eq('id', id).select();
-    if (error) throw error;
-    return data[0];
-}
-
-// ==================== التكرار التلقائي ====================
-export async function getRecurringSettings(filters = {}) {
-    let query = supabase.from('recurring_settings').select('*, members(name)');
-    if (filters.member_id) query = query.eq('member_id', filters.member_id);
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
-}
-export async function addRecurringSetting(setting) {
-    const { data, error } = await supabase.from('recurring_settings').insert([{
-        ...setting,
-        id: Date.now(),
-        created_at: new Date().toISOString(),
-        start_date: setting.start_date || new Date().toISOString().split('T')[0],
-        run_count: 0
-    }]).select();
-    if (error) throw error;
-    return data[0];
-}
-export async function updateRecurringSetting(id, updates) {
-    const { data, error } = await supabase.from('recurring_settings').update(updates).eq('id', id).select();
-    if (error) throw error;
-    return data[0];
-}
-export async function deleteRecurringSetting(id) {
-    const { error } = await supabase.from('recurring_settings').delete().eq('id', id);
-    if (error) throw error;
-    return true;
-}
-export async function runRecurringNow(settingId) {
-    const { data: setting, error: fetchError } = await supabase.from('recurring_settings').select('*').eq('id', settingId).single();
-    if (fetchError) throw fetchError;
-    const transaction = {
-        id: Date.now(),
-        member_id: setting.member_id,
-        amount: setting.amount,
-        description: setting.description,
-        category: setting.category,
-        type: setting.type,
-        date: new Date().toISOString().split('T')[0],
-        status: 'pending',
-        source: 'recurring',
-        created_by: 'system'
-    };
-    const { error: insertError } = await supabase.from('transactions').insert([transaction]);
-    if (insertError) throw insertError;
-    await supabase.from('recurring_settings').update({ 
-        last_run: new Date().toISOString(),
-        run_count: setting.run_count + 1
-    }).eq('id', settingId);
-    return transaction;
-}
-
-// ==================== الأنظمة ====================
-export async function getSystems() {
-    const { data, error } = await supabase.from('systems').select('*').order('created_at', { ascending: false });
-    if (error) throw error;
-    return data;
-}
-export async function addSystem(system) {
-    const { data, error } = await supabase.from('systems').insert([{ ...system, created_at: new Date().toISOString() }]).select();
-    if (error) throw error;
-    return data[0];
-}
-export async function toggleSystem(id, isActive) {
-    const { data, error } = await supabase.from('systems').update({ is_active: isActive }).eq('id', id).select();
-    if (error) throw error;
-    return data[0];
-}
-
-// ==================== سجل الأحداث ====================
-export async function addAuditLog(log) {
-    try {
-        const { error } = await supabase.from('audit_log').insert([{ ...log, created_at: new Date().toISOString() }]);
-        if (error) throw error;
-        return true;
-    } catch (e) { console.error('فشل تسجيل الحدث:', e); return false; }
-}
-export async function getAuditLogs(limit = 200) {
-    const { data, error } = await supabase.from('audit_log').select('*, members(name)').order('created_at', { ascending: false }).limit(limit);
-    if (error) throw error;
-    return data;
-}
-
-// ==================== الصندوق العام ====================
-export async function getMasterBalance() {
-    const { data, error } = await supabase.from('master_account').select('balance, last_updated').eq('id', 1).single();
-    if (error) throw error;
-    return data;
-}
-export async function updateMasterBalance(amount, userId) {
-    const { data: current } = await supabase.from('master_account').select('balance').eq('id', 1).single();
-    const newBalance = (current?.balance || 0) + amount;
-    const { error } = await supabase.from('master_account').update({ 
-        balance: newBalance, 
-        last_updated: new Date().toISOString(),
-        updated_by: userId 
-    }).eq('id', 1);
-    if (error) throw error;
-    return newBalance;
-}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام المحاسبة المتكامل - الإصدار الثاني</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Tahoma', 'Arial', sans-serif; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); min-height: 100vh; display: flex; justify-content: center; align-items: center; position: relative; overflow-x: hidden; }
+        body::before { content: ''; position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.05) 0%, transparent 50%); animation: moveBg 10s ease-in-out infinite; }
+        @keyframes moveBg { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(5%); opacity: 1; } }
+        .login-container { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 40px; border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); width: 90%; max-width: 420px; text-align: center; z-index: 1; transition: transform 0.3s; border: 1px solid rgba(255,255,255,0.2); }
+        .login-container:hover { transform: translateY(-5px); }
+        .logo { font-size: 64px; margin-bottom: 15px; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        h1 { color: #1e3a5f; margin-bottom: 10px; font-size: 28px; font-weight: bold; }
+        .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
+        .input-group { margin-bottom: 20px; text-align: right; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: bold; }
+        input { width: 100%; padding: 14px 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; transition: all 0.3s; background: #f8f9fa; }
+        input:focus { outline: none; border-color: #1e3a5f; background: white; box-shadow: 0 0 0 3px rgba(30,58,95,0.1); }
+        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #1e3a5f, #0a2f44); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(30,58,95,0.4); }
+        .error { color: #dc3545; margin-top: 15px; font-size: 14px; padding: 12px; background: #ffe6e6; border-radius: 10px; display: none; white-space: pre-line; text-align: right; border: 1px solid #f5c2c2; word-wrap: break-word; }
+        .info { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #888; }
+        .info p { margin: 5px 0; }
+        .info strong { color: #1e3a5f; }
+        .version-badge { position: fixed; bottom: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; z-index: 1; }
+        @media (max-width: 480px) { .login-container { padding: 30px 20px; margin: 20px; } h1 { font-size: 22px; } .logo { font-size: 48px; } }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">📊⚡💰</div>
+        <h1>نظام المحاسبة المتكامل</h1>
+        <div class="subtitle">الإصدار الثاني | NextGen Accounting</div>
+        <form id="loginForm">
+            <div class="input-group">
+                <label>🔐 رقم العضوية</label>
+                <input type="text" id="memberId" placeholder="أدخل رقم العضوية" required autocomplete="off">
+            </div>
+            <button type="submit"><span>🚪</span> دخول</button>
+        </form>
+        <div id="errorMsg" class="error"></div>
+        <div class="info">
+            <p>🔹 <strong>ADMIN001</strong> - المدير العام (صلاحية كاملة)</p>
+            <p>🔹 <strong>AUDITOR001</strong> - مراجع الحسابات</p>
+            <p>🔹 <strong>M001</strong> - موظف</p>
+            <p>🔹 <strong>M002</strong> - خياط</p>
+            <hr style="margin: 10px 0;">
+            <p>✨ نظام متعدد البيئات | تكرار تلقائي | اعتراضات فورية</p>
+        </div>
+    </div>
+    <div class="version-badge">v2.0 | NextGen Accounting</div>
+    <script type="module">
+        import { supabase, getMemberById, addAuditLog } from './supabase.js';
+        const form = document.getElementById('loginForm');
+        const memberIdInput = document.getElementById('memberId');
+        const errorDiv = document.getElementById('errorMsg');
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const memberId = memberIdInput.value.trim();
+            if (!memberId) { showError('الرجاء إدخال رقم العضوية'); return; }
+            try {
+                const member = await getMemberById(memberId);
+                if (!member) { showError('رقم العضوية غير صحيح'); return; }
+                addAuditLog({ user_id: member.id, action: 'login', target_type: 'auth', target_id: member.id, ip_address: 'client' }).catch(err => console.warn('تعذر تسجيل حدث الدخول:', err));
+                localStorage.setItem('memberId', member.id);
+                localStorage.setItem('memberRole', member.role);
+                localStorage.setItem('memberName', member.name);
+                localStorage.setItem('systemId', member.system_id || 'default');
+                if (member.role === 'admin') window.location.href = 'admin.html';
+                else if (member.role === 'auditor') window.location.href = 'auditor.html';
+                else window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('خطأ:', error);
+                let errorMessage = 'حدث خطأ في الاتصال بقاعدة البيانات';
+                if (error.message) errorMessage += '\n\n📌 ' + error.message;
+                if (error.details) errorMessage += '\n📌 ' + error.details;
+                if (error.hint) errorMessage += '\n💡 ' + error.hint;
+                if (error.code) errorMessage += '\n🔢 رمز الخطأ: ' + error.code;
+                if (error.message && error.message.includes('relation') && error.message.includes('does not exist')) errorMessage += '\n\n⚠️ يبدو أن جداول قاعدة البيانات غير موجودة. الرجاء تنفيذ كود SQL أولاً.';
+                showError(errorMessage);
+            }
+        });
+        function showError(message) { errorDiv.textContent = message; errorDiv.style.display = 'block'; }
+        memberIdInput.addEventListener('input', () => errorDiv.style.display = 'none');
+    </script>
+</body>
+</html>
