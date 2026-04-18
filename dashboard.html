@@ -3,274 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة الموظف - نظام المحاسبة المتكامل</title>
+    <title>لوحة المستخدم</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Tahoma', 'Arial', sans-serif; background: #f0f2f5; }
-        .header { background: linear-gradient(135deg, #1e3a5f, #0a2f44); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .logo h2 { font-size: 22px; } .logo span { font-size: 12px; opacity: 0.8; }
-        .user-info { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .user-badge { background: rgba(255,255,255,0.2); padding: 8px 18px; border-radius: 30px; font-size: 14px; }
-        .logout-btn { background: #dc3545; color: white; border: none; padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; }
-        .container { max-width: 1300px; margin: 30px auto; padding: 0 25px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 35px; }
-        .stat-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; }
-        .stat-card .icon { font-size: 40px; margin-bottom: 12px; }
-        .stat-card h3 { color: #666; font-size: 16px; margin-bottom: 10px; }
-        .stat-card .value { font-size: 32px; font-weight: bold; color: #1e3a5f; }
-        .section { background: white; border-radius: 20px; padding: 25px; margin-bottom: 35px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
-        .section-title { font-size: 22px; color: #1e3a5f; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 3px solid #e0e0e0; display: flex; align-items: center; gap: 10px; }
-        .form-card { background: #f8f9fa; padding: 20px; border-radius: 20px; margin-bottom: 25px; }
-        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-weight: bold; color: #333; font-size: 13px; }
-        .form-group input, .form-group select { padding: 10px 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; }
-        .btn-primary { background: #1e3a5f; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: bold; }
-        .transaction-list { display: flex; flex-direction: column; gap: 12px; }
-        .transaction-card { background: #f8f9fa; border-radius: 15px; padding: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-right: 5px solid; }
-        .transaction-card.pending { border-right-color: #ffc107; background: #fffbf0; }
-        .transaction-card.auditor_reviewed { border-right-color: #17a2b8; background: #e8f4f8; }
-        .transaction-card.approved { border-right-color: #28a745; background: #e8f5e9; }
-        .transaction-card.rejected { border-right-color: #dc3545; background: #ffe6e6; }
-        .transaction-info { flex: 2; }
-        .transaction-title { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-        .transaction-meta { font-size: 12px; color: #888; display: flex; gap: 15px; flex-wrap: wrap; }
-        .transaction-amount { font-size: 20px; font-weight: bold; color: #1e3a5f; min-width: 120px; text-align: center; }
-        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 30px; font-size: 12px; font-weight: bold; }
-        .status-badge.pending { background: #ffc107; color: #000; }
-        .status-badge.auditor_reviewed { background: #17a2b8; color: white; }
-        .status-badge.approved { background: #28a745; color: white; }
-        .status-badge.rejected { background: #dc3545; color: white; }
-        .object-btn { background: #dc3545; color: white; border: none; padding: 8px 18px; border-radius: 25px; cursor: pointer; font-size: 13px; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
-        .modal-content { background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 500px; }
-        .modal-content textarea { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 12px; margin: 15px 0; font-family: inherit; resize: vertical; }
-        .modal-buttons { display: flex; gap: 12px; justify-content: flex-end; }
-        .btn-secondary { background: #6c757d; color: white; padding: 10px 22px; border: none; border-radius: 30px; cursor: pointer; }
-        .empty-state { text-align: center; padding: 40px; color: #999; }
-        @media (max-width: 768px) {
-            .header { flex-direction: column; gap: 12px; text-align: center; }
-            .transaction-card { flex-direction: column; text-align: center; }
-            .container { padding: 0 15px; }
-        }
+        body { font-family: Tahoma, Arial, sans-serif; background: #f0f2f5; }
+        .header { background: #1e3a5f; color: white; padding: 15px 30px; display: flex; justify-content: space-between; }
+        .logout-btn { background: #dc3545; padding: 8px 20px; border: none; border-radius: 30px; cursor: pointer; }
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 25px; }
+        .section { background: white; border-radius: 20px; padding: 20px; margin-bottom: 25px; }
+        .form-card { background: #f8f9fa; padding: 20px; border-radius: 20px; margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 15px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 10px; width: 100%; }
+        .btn-primary { background: #1e3a5f; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; }
+        .transaction-card { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .badge-pending { background: #ffc107; padding: 4px 12px; border-radius: 30px; }
+        .badge-approved { background: #28a745; color: white; padding: 4px 12px; border-radius: 30px; }
+        .object-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; }
+        @media (max-width: 768px) { .transaction-card { flex-direction: column; text-align: center; } }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo"><h2>📊 نظام المحاسبة المتكامل</h2><span>الإصدار الثاني | NextGen</span></div>
-        <div class="user-info">
-            <span class="user-badge">👤 <span id="userName"></span> | 🆔 <span id="userId"></span></span>
-            <span class="user-badge">⭐ <span id="userRole"></span></span>
-            <button class="logout-btn" onclick="logout()">🚪 خروج</button>
-        </div>
+        <h2>📊 لوحة المستخدم</h2>
+        <button class="logout-btn" onclick="logout()">خروج</button>
     </div>
-    
     <div class="container">
-        <div class="stats-grid">
-            <div class="stat-card"><div class="icon">📈</div><h3>إجمالي المستحق (قيد المراجعة)</h3><div class="value" id="totalPending">0 ريال</div></div>
-            <div class="stat-card"><div class="icon">✅</div><h3>إجمالي المستلم (المؤكد)</h3><div class="value" id="totalConfirmed">0 ريال</div></div>
-            <div class="stat-card"><div class="icon">⏳</div><h3>معاملات تحتاج مراجعتك</h3><div class="value" id="pendingCount">0</div></div>
-        </div>
-        
-        <!-- نموذج إضافة معاملة جديد -->
+        <!-- عرض المعاملات والإنتاج حسب الدور -->
         <div class="section">
-            <div class="section-title"><span>➕</span> إضافة معاملة جديدة</div>
+            <h3>المعاملات المالية</h3>
+            <div id="transactionsList"></div>
+        </div>
+        <div class="section" id="productionSection" style="display:none;">
+            <h3>إضافة إنتاج جديد (للخياطين فقط)</h3>
             <div class="form-card">
                 <div class="form-row">
-                    <div class="form-group"><label>الوصف</label><input type="text" id="newTransDesc" placeholder="وصف المعاملة"></div>
-                    <div class="form-group"><label>المبلغ</label><input type="number" id="newTransAmount" placeholder="المبلغ"></div>
-                    <div class="form-group"><label>التصنيف</label><input type="text" id="newTransCategory" placeholder="رواتب، مكافآت، صرف..."></div>
+                    <input type="text" id="prodName" placeholder="اسم المنتج">
+                    <input type="text" id="prodModel" placeholder="الموديل">
+                    <input type="number" id="prodQuantity" placeholder="الكمية">
+                    <input type="number" id="prodPrice" placeholder="السعر (اختياري)">
                 </div>
-                <button class="btn-primary" onclick="addMyTransaction()">➕ إضافة معاملة</button>
+                <button class="btn-primary" onclick="addProduction()">إضافة إنتاج</button>
             </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title"><span>📋</span> المعاملات المالية</div>
-            <div id="transactionsList" class="transaction-list"></div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title"><span>🧵</span> إنتاج الخياطة</div>
-            <div id="productionsList" class="transaction-list"></div>
+            <h3>إنتاجاتي</h3>
+            <div id="productionsList"></div>
         </div>
     </div>
-    
-    <!-- مودال الاعتراض -->
-    <div id="objectModal" class="modal">
-        <div class="modal-content">
-            <h3>✋ تقديم اعتراض</h3>
-            <label>نوع المعاملة:</label>
-            <input type="text" id="objectType" readonly style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:10px; background:#f5f5f5;">
-            <label>سبب الاعتراض:</label>
-            <textarea id="objectReason" rows="4" placeholder="اكتف سبب الاعتراض بالتفصيل..."></textarea>
-            <div class="modal-buttons">
-                <button class="btn-secondary" onclick="closeModal()">إلغاء</button>
-                <button class="btn-primary" onclick="sendObjection()">إرسال الاعتراض</button>
-            </div>
-        </div>
-    </div>
-    
     <script type="module">
-        import { supabase, addTransaction, addObjection, addAuditLog } from './supabase.js';
-        
-        let currentMemberId = '', currentMemberName = '', currentMemberRole = '';
-        let currentTransactions = [], currentProductions = [];
-        let currentObjectItem = null, currentObjectType = '';
-        
-        async function loadUserData() {
-            currentMemberId = localStorage.getItem('memberId');
-            currentMemberName = localStorage.getItem('memberName');
-            currentMemberRole = localStorage.getItem('memberRole');
-            document.getElementById('userName').innerText = currentMemberName || currentMemberId;
-            document.getElementById('userId').innerText = currentMemberId;
-            document.getElementById('userRole').innerText = currentMemberRole === 'employee' ? 'موظف' : 'خياط';
+        import { getCurrentUser, getTransactions, addTransaction, getProductions, addProduction, signOut } from './supabase.js';
+        let currentUser = null;
+        async function init() {
+            currentUser = await getCurrentUser();
+            if (!currentUser || (currentUser.role !== 'employee' && currentUser.role !== 'tailor')) { window.location.href = 'index.html'; return; }
+            if (currentUser.role === 'tailor') document.getElementById('productionSection').style.display = 'block';
+            await loadTransactions();
+            if (currentUser.role === 'tailor') await loadProductions();
         }
-        
         async function loadTransactions() {
-            try {
-                const { data, error } = await supabase.from('transactions').select('*').eq('member_id', currentMemberId).order('date', { ascending: false });
-                if (error) throw error;
-                currentTransactions = data || [];
-                
-                const pendingTotal = currentTransactions.filter(t => t.status === 'pending' || t.status === 'auditor_reviewed').reduce((sum, t) => sum + t.amount, 0);
-                const confirmedTotal = currentTransactions.filter(t => t.status === 'approved').reduce((sum, t) => sum + t.amount, 0);
-                const pendingCount = currentTransactions.filter(t => t.status === 'pending').length;
-                
-                document.getElementById('totalPending').innerHTML = pendingTotal.toLocaleString() + ' ريال';
-                document.getElementById('totalConfirmed').innerHTML = confirmedTotal.toLocaleString() + ' ريال';
-                document.getElementById('pendingCount').innerHTML = pendingCount;
-                
-                const statusMap = { 'pending': 'بانتظار المراجع', 'auditor_reviewed': 'بانتظار المدير', 'approved': 'معتمدة', 'rejected': 'مرفوضة' };
-                const statusClassMap = { 'pending': 'pending', 'auditor_reviewed': 'auditor_reviewed', 'approved': 'approved', 'rejected': 'rejected' };
-                
-                const html = currentTransactions.map(t => `
-                    <div class="transaction-card ${statusClassMap[t.status]}">
-                        <div class="transaction-info">
-                            <div class="transaction-title">${t.description || 'معاملة مالية'}</div>
-                            <div class="transaction-meta"><span>📅 ${t.date}</span><span>🏷️ ${t.category || 'عام'}</span>${t.reject_reason ? `<span>❌ سبب الرفض: ${t.reject_reason}</span>` : ''}</div>
-                        </div>
-                        <div class="transaction-amount">${t.amount.toLocaleString()} ريال</div>
-                        <div class="transaction-status"><span class="status-badge ${statusClassMap[t.status]}">${statusMap[t.status]}</span></div>
-                        <div>
-                            ${t.status === 'approved' ? `<button class="object-btn" onclick='openObjection("transaction", ${JSON.stringify(t).replace(/'/g, "\\'")})'>✋ اعتراض على معاملة معتمدة</button>` : ''}
-                            ${t.status === 'pending' || t.status === 'auditor_reviewed' ? `<button class="object-btn" onclick='openObjection("transaction", ${JSON.stringify(t).replace(/'/g, "\\'")})'>✋ اعتراض</button>` : ''}
-                        </div>
-                    </div>
-                `).join('');
-                document.getElementById('transactionsList').innerHTML = html || '<div class="empty-state">📭 لا توجد معاملات</div>';
-            } catch (error) { console.error('خطأ:', error); }
+            const data = await getTransactions();
+            const container = document.getElementById('transactionsList');
+            container.innerHTML = data.map(t => `<div class="transaction-card">
+                <div><strong>${t.description}</strong><br><small>${t.date}</small></div>
+                <div>${t.amount} ريال</div>
+                <div><span class="badge-${t.status === 'approved' ? 'approved' : 'pending'}">${t.status === 'approved' ? 'معتمدة' : 'قيد المراجعة'}</span></div>
+                ${t.status === 'approved' ? `<button class="object-btn" onclick="alert('يمكنك تقديم اعتراض عبر مراسلة الإدارة')">اعتراض</button>` : ''}
+            </div>`).join('');
         }
-        
+        window.addTransaction = async () => {
+            const desc = prompt('وصف المعاملة');
+            const amount = parseFloat(prompt('المبلغ'));
+            if (desc && amount) await addTransaction({ member_id: currentUser.id, amount, description: desc, category: 'عام' });
+            loadTransactions();
+        };
         async function loadProductions() {
-            try {
-                const { data, error } = await supabase.from('productions').select('*').eq('member_id', currentMemberId).order('date', { ascending: false });
-                if (error) throw error;
-                currentProductions = data || [];
-                const html = currentProductions.map(p => `
-                    <div class="transaction-card ${p.status === 'approved' ? 'approved' : 'pending'}">
-                        <div class="transaction-info"><div class="transaction-title">${p.product_name}</div><div class="transaction-meta"><span>📅 ${p.date}</span><span>👕 ${p.model || '-'}</span><span>📦 ${p.quantity} قطعة</span></div></div>
-                        <div class="transaction-amount">${p.price ? p.price.toLocaleString() + ' ريال' : 'سعر غير محدد'}</div>
-                        <div class="transaction-status"><span class="status-badge ${p.status === 'approved' ? 'approved' : 'pending'}">${p.status === 'approved' ? '✅ مؤكد' : '⏳ قيد المراجعة'}</span></div>
-                    </div>
-                `).join('');
-                document.getElementById('productionsList').innerHTML = html || '<div class="empty-state">📭 لا توجد إنتاجات</div>';
-            } catch (error) { console.error('خطأ:', error); }
+            const data = await getProductions();
+            const container = document.getElementById('productionsList');
+            container.innerHTML = data.map(p => `<div class="transaction-card">
+                <div><strong>${p.product_name}</strong><br><small>${p.quantity} قطعة - ${p.price ? p.price + ' ريال' : 'سعر غير محدد'}</small></div>
+                <div><span class="badge-${p.status === 'approved' ? 'approved' : 'pending'}">${p.status === 'approved' ? 'معتمد' : 'قيد المراجعة'}</span></div>
+            </div>`).join('');
         }
-        
-        window.addMyTransaction = async function() {
-            const desc = document.getElementById('newTransDesc').value.trim();
-            const amount = parseFloat(document.getElementById('newTransAmount').value);
-            const category = document.getElementById('newTransCategory').value.trim();
-            if (!desc || !amount) return alert('املأ الوصف والمبلغ');
-            
-            const transaction = { member_id: currentMemberId, amount, description: desc, category, type: 'expense' };
-            try {
-                await addTransaction(transaction);
-                await addAuditLog({ user_id: currentMemberId, action: 'add', target_type: 'transaction', new_value: desc });
-                await loadTransactions();
-                document.getElementById('newTransDesc').value = '';
-                document.getElementById('newTransAmount').value = '';
-                document.getElementById('newTransCategory').value = '';
-                alert('تمت إضافة المعاملة بنجاح');
-            } catch (e) { alert('خطأ في الإضافة: ' + e.message); }
+        window.addProduction = async () => {
+            const product_name = document.getElementById('prodName').value;
+            const quantity = parseInt(document.getElementById('prodQuantity').value);
+            if (!product_name || !quantity) return alert('املأ الحقول');
+            await addProduction({ product_name, model: document.getElementById('prodModel').value, quantity, price: parseFloat(document.getElementById('prodPrice').value) || null });
+            loadProductions();
         };
-        
-        window.openObjection = function(type, item) {
-            currentObjectType = type;
-            currentObjectItem = item;
-            document.getElementById('objectType').value = type === 'transaction' ? `معاملة: ${item.description}` : `إنتاج: ${item.product_name}`;
-            document.getElementById('objectReason').value = '';
-            document.getElementById('objectModal').style.display = 'flex';
-        };
-        
-        window.sendObjection = async function() {
-            const reason = document.getElementById('objectReason').value.trim();
-            if (!reason) { alert('الرجاء كتابة سبب الاعتراض'); return; }
-            
-            try {
-                const objection = {
-                    member_id: currentMemberId,
-                    transaction_id: currentObjectType === 'transaction' ? currentObjectItem.id : null,
-                    production_id: currentObjectType === 'production' ? currentObjectItem.id : null,
-                    reason: reason
-                };
-                await addObjection(objection);
-                await addAuditLog({ user_id: currentMemberId, action: 'objection', target_type: currentObjectType, target_id: currentObjectItem.id, new_value: reason });
-                
-                const message = `📢 اعتراض من ${currentMemberName} (${currentMemberId})\n\nالنوع: ${currentObjectType === 'transaction' ? 'معاملة مالية' : 'إنتاج'}\nالتفاصيل: ${currentObjectType === 'transaction' ? currentObjectItem.description : currentObjectItem.product_name}\nالمبلغ/الكمية: ${currentObjectType === 'transaction' ? currentObjectItem.amount + ' ريال' : currentObjectItem.quantity + ' قطعة'}\nالتاريخ: ${currentObjectItem.date}\nسبب الاعتراض: ${reason}`;
-                const whatsappUrl = `https://wa.me/777524788?text=${encodeURIComponent(message)}`;
-                window.open(whatsappUrl, '_blank');
-                
-                alert('✅ تم إرسال الاعتراض بنجاح');
-                closeModal();
-            } catch (error) { alert('❌ حدث خطأ في إرسال الاعتراض'); }
-        };
-        
-        function closeModal() { document.getElementById('objectModal').style.display = 'none'; currentObjectItem = null; }
-        window.closeModal = closeModal;
-        
-        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
-        window.logout = logout;
-        
-        async function runAutoRecurring() {
-            try {
-                const { data: settings, error } = await supabase.from('recurring_settings').select('*').eq('member_id', currentMemberId).eq('status', 'active');
-                if (error) throw error;
-                const today = new Date().toISOString().split('T')[0];
-                for (const setting of settings || []) {
-                    let shouldRun = false;
-                    const startDate = setting.start_date || setting.created_at?.split('T')[0];
-                    if (startDate > today) continue;
-                    if (setting.end_date && setting.end_date < today) continue;
-                    
-                    if (setting.type === 'daily') shouldRun = setting.last_run !== today;
-                    else if (setting.type === 'weekly') {
-                        if (!setting.last_run) shouldRun = true;
-                        else {
-                            const lastRun = new Date(setting.last_run);
-                            const todayDate = new Date(today);
-                            const diffDays = Math.floor((todayDate - lastRun) / (1000 * 60 * 60 * 24));
-                            shouldRun = diffDays >= 7;
-                        }
-                    }
-                    if (shouldRun) {
-                        await supabase.from('transactions').insert([{
-                            id: Date.now(), member_id: currentMemberId, amount: setting.amount,
-                            description: setting.description, type: setting.type, category: setting.category,
-                            date: today, status: 'pending', created_by: 'system', source: 'recurring'
-                        }]);
-                        await supabase.from('recurring_settings').update({ last_run: today, run_count: (setting.run_count || 0) + 1 }).eq('id', setting.id);
-                    }
-                }
-            } catch (error) { console.error('خطأ في التكرار:', error); }
-        }
-        
-        await loadUserData();
-        await loadTransactions();
-        await loadProductions();
-        await runAutoRecurring();
-        setInterval(() => { loadTransactions(); loadProductions(); runAutoRecurring(); }, 3600000);
+        window.logout = async () => { await signOut(); window.location.href = 'index.html'; };
+        init();
     </script>
 </body>
 </html>
