@@ -2,94 +2,77 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة المستخدم</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Tahoma, Arial, sans-serif; background: #f0f2f5; }
-        .header { background: #1e3a5f; color: white; padding: 15px 30px; display: flex; justify-content: space-between; }
-        .logout-btn { background: #dc3545; padding: 8px 20px; border: none; border-radius: 30px; cursor: pointer; }
-        .container { max-width: 1200px; margin: 25px auto; padding: 0 25px; }
-        .section { background: white; border-radius: 20px; padding: 20px; margin-bottom: 25px; }
-        .form-card { background: #f8f9fa; padding: 20px; border-radius: 20px; margin-bottom: 20px; }
-        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 15px; }
-        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 10px; width: 100%; }
-        .btn-primary { background: #1e3a5f; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; }
-        .transaction-card { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .badge-pending { background: #ffc107; padding: 4px 12px; border-radius: 30px; }
-        .badge-approved { background: #28a745; color: white; padding: 4px 12px; border-radius: 30px; }
-        .object-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; }
-        @media (max-width: 768px) { .transaction-card { flex-direction: column; text-align: center; } }
-    </style>
+    <style>/* نفس الأنماط */</style>
 </head>
 <body>
-    <div class="header">
-        <h2>📊 لوحة المستخدم</h2>
-        <button class="logout-btn" onclick="logout()">خروج</button>
-    </div>
+    <div class="header"><h2>📋 لوحة المستخدم</h2><button onclick="logout()">خروج</button></div>
     <div class="container">
-        <!-- عرض المعاملات والإنتاج حسب الدور -->
-        <div class="section">
-            <h3>المعاملات المالية</h3>
-            <div id="transactionsList"></div>
+        <div id="tailorSection" style="display:none;">
+            <h3>➕ إضافة إنتاج جديد</h3>
+            <input type="text" id="productName" placeholder="اسم المنتج">
+            <input type="number" id="quantity" placeholder="الكمية">
+            <input type="number" id="price" placeholder="السعر">
+            <button onclick="addProduction()">إضافة</button>
         </div>
-        <div class="section" id="productionSection" style="display:none;">
-            <h3>إضافة إنتاج جديد (للخياطين فقط)</h3>
-            <div class="form-card">
-                <div class="form-row">
-                    <input type="text" id="prodName" placeholder="اسم المنتج">
-                    <input type="text" id="prodModel" placeholder="الموديل">
-                    <input type="number" id="prodQuantity" placeholder="الكمية">
-                    <input type="number" id="prodPrice" placeholder="السعر (اختياري)">
-                </div>
-                <button class="btn-primary" onclick="addProduction()">إضافة إنتاج</button>
-            </div>
-            <h3>إنتاجاتي</h3>
-            <div id="productionsList"></div>
-        </div>
+        <h3>معاملاتي المالية</h3>
+        <table id="myTransactions"><thead><tr><th>الوصف</th><th>المبلغ</th><th>الحالة</th><th>اعتراض</th></tr></thead><tbody></tbody></table>
+        <h3>إنتاجاتي</h3>
+        <table id="myProductions"><thead><tr><th>المنتج</th><th>الكمية</th><th>الحالة</th><th>اعتراض</th></tr></thead><tbody></tbody></table>
     </div>
     <script type="module">
-        import { getCurrentUser, getTransactions, addTransaction, getProductions, addProduction, signOut } from './supabase.js';
-        let currentUser = null;
+        import { supabase, getCurrentUser, addProduction, addObjection } from './supabase.js';
+        let currentUser;
         async function init() {
             currentUser = await getCurrentUser();
-            if (!currentUser || (currentUser.role !== 'employee' && currentUser.role !== 'tailor')) { window.location.href = 'index.html'; return; }
-            if (currentUser.role === 'tailor') document.getElementById('productionSection').style.display = 'block';
-            await loadTransactions();
-            if (currentUser.role === 'tailor') await loadProductions();
+            if (!currentUser) window.location.href = 'index.html';
+            if (currentUser.role === 'tailor') document.getElementById('tailorSection').style.display = 'block';
+            await loadMyTransactions();
+            await loadMyProductions();
         }
-        async function loadTransactions() {
-            const data = await getTransactions();
-            const container = document.getElementById('transactionsList');
-            container.innerHTML = data.map(t => `<div class="transaction-card">
-                <div><strong>${t.description}</strong><br><small>${t.date}</small></div>
-                <div>${t.amount} ريال</div>
-                <div><span class="badge-${t.status === 'approved' ? 'approved' : 'pending'}">${t.status === 'approved' ? 'معتمدة' : 'قيد المراجعة'}</span></div>
-                ${t.status === 'approved' ? `<button class="object-btn" onclick="alert('يمكنك تقديم اعتراض عبر مراسلة الإدارة')">اعتراض</button>` : ''}
-            </div>`).join('');
+        async function loadMyTransactions() {
+            const { data } = await supabase.from('transactions').select('*').eq('member_id', currentUser.id);
+            const tbody = document.querySelector('#myTransactions tbody');
+            tbody.innerHTML = data.map(t => `
+                <tr>
+                    <td>${t.description}</td><td>${t.amount}</td><td>${t.status}</td>
+                    <td><button onclick="object('transaction','${t.id}')">اعتراض</button></td>
+                </tr>
+            `).join('');
         }
-        window.addTransaction = async () => {
-            const desc = prompt('وصف المعاملة');
-            const amount = parseFloat(prompt('المبلغ'));
-            if (desc && amount) await addTransaction({ member_id: currentUser.id, amount, description: desc, category: 'عام' });
-            loadTransactions();
+        async function loadMyProductions() {
+            const { data } = await supabase.from('productions').select('*').eq('member_id', currentUser.id);
+            const tbody = document.querySelector('#myProductions tbody');
+            tbody.innerHTML = data.map(p => `
+                <tr>
+                    <td>${p.product_name}</td><td>${p.quantity}</td><td>${p.status}</td>
+                    <td><button onclick="object('production','${p.id}')">اعتراض</button></td>
+                </tr>
+            `).join('');
+        }
+        window.object = async (type, id) => {
+            const reason = prompt('سبب الاعتراض:');
+            if (reason) {
+                await addObjection({
+                    member_id: currentUser.id,
+                    transaction_id: type === 'transaction' ? id : null,
+                    production_id: type === 'production' ? id : null,
+                    reason
+                }, currentUser.id);
+                alert('تم إرسال الاعتراض');
+            }
         };
-        async function loadProductions() {
-            const data = await getProductions();
-            const container = document.getElementById('productionsList');
-            container.innerHTML = data.map(p => `<div class="transaction-card">
-                <div><strong>${p.product_name}</strong><br><small>${p.quantity} قطعة - ${p.price ? p.price + ' ريال' : 'سعر غير محدد'}</small></div>
-                <div><span class="badge-${p.status === 'approved' ? 'approved' : 'pending'}">${p.status === 'approved' ? 'معتمد' : 'قيد المراجعة'}</span></div>
-            </div>`).join('');
-        }
         window.addProduction = async () => {
-            const product_name = document.getElementById('prodName').value;
-            const quantity = parseInt(document.getElementById('prodQuantity').value);
+            const product_name = document.getElementById('productName').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const price = parseFloat(document.getElementById('price').value);
             if (!product_name || !quantity) return alert('املأ الحقول');
-            await addProduction({ product_name, model: document.getElementById('prodModel').value, quantity, price: parseFloat(document.getElementById('prodPrice').value) || null });
-            loadProductions();
+            await addProduction({ member_id: currentUser.id, product_name, model: '', quantity, price }, currentUser.id);
+            alert('تمت الإضافة');
+            await loadMyProductions();
         };
-        window.logout = async () => { await signOut(); window.location.href = 'index.html'; };
+        async function logout() { await supabase.auth.signOut(); window.location.href = 'index.html'; }
+        window.logout = logout;
         init();
     </script>
 </body>
