@@ -2,51 +2,33 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة المدير - نظام المحاسبة المتكامل</title>
+    <title>لوحة المدير</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Tahoma', Arial, sans-serif; background: #f0f2f5; }
-        .header { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .logo h2 { font-size: 22px; }
-        .user-info { display: flex; gap: 15px; align-items: center; }
-        .logout-btn { background: #dc3545; padding: 8px 20px; border: none; border-radius: 30px; cursor: pointer; color: white; }
-        .container { max-width: 1400px; margin: 25px auto; padding: 0 25px; }
-        .tabs { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; }
-        .tab-btn { padding: 12px 28px; background: white; border: none; border-radius: 40px; cursor: pointer; font-weight: bold; }
+        body { font-family: 'Tahoma', sans-serif; background: #f0f2f5; }
+        .header { background: #1e3a5f; color: white; padding: 15px 30px; display: flex; justify-content: space-between; }
+        .container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 20px; background: white; border: none; border-radius: 30px; cursor: pointer; }
         .tab-btn.active { background: #1e3a5f; color: white; }
-        .tab-content { display: none; background: white; border-radius: 25px; padding: 25px; margin-bottom: 25px; }
+        .tab-content { display: none; background: white; padding: 20px; border-radius: 20px; }
         .tab-content.active { display: block; }
-        .form-card { background: #f8f9fa; padding: 20px; border-radius: 20px; margin-bottom: 25px; }
-        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 15px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-weight: bold; }
-        .form-group input, .form-group select { padding: 10px; border: 1px solid #ddd; border-radius: 10px; }
-        .btn-primary { background: #1e3a5f; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; }
-        .badge { display: inline-block; padding: 4px 12px; border-radius: 30px; font-size: 12px; }
-        .badge-pending { background: #ffc107; }
-        .badge-auditor_reviewed { background: #17a2b8; color: white; }
-        .badge-approved { background: #28a745; color: white; }
-        .badge-rejected { background: #dc3545; color: white; }
-        .btn-sm { padding: 5px 12px; border: none; border-radius: 20px; cursor: pointer; margin: 2px; }
+        th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: right; }
+        .btn-sm { padding: 5px 10px; border: none; border-radius: 20px; cursor: pointer; }
         .btn-success { background: #28a745; color: white; }
         .btn-danger { background: #dc3545; color: white; }
         .btn-warning { background: #ffc107; }
-        .search-box { display: flex; gap: 12px; margin-bottom: 20px; }
-        .search-box input, .search-box select { padding: 10px; border-radius: 30px; border: 1px solid #ddd; flex: 1; }
-        @media (max-width: 768px) { .header { flex-direction: column; } .container { padding: 0 15px; } }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-pending { background: #ffc107; }
+        .badge-auditor_reviewed { background: #17a2b8; color: white; }
+        .badge-approved { background: #28a745; color: white; }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo"><h2>👑 نظام المحاسبة المتكامل - المدير</h2></div>
-        <div class="user-info">
-            <span id="adminName"></span>
-            <button class="logout-btn" onclick="logout()">خروج</button>
-        </div>
+        <h2>👑 لوحة المدير</h2>
+        <button onclick="logout()" style="background:#dc3545; color:white; border:none; padding:8px 20px; border-radius:30px;">خروج</button>
     </div>
     <div class="container">
         <div class="tabs">
@@ -55,161 +37,116 @@
             <button class="tab-btn" onclick="switchTab('objections')">الاعتراضات</button>
             <button class="tab-btn" onclick="switchTab('members')">الأعضاء</button>
         </div>
-
-        <!-- تبويب المعاملات -->
         <div id="transactionsTab" class="tab-content active">
-            <div class="form-card">
-                <h3>إضافة معاملة</h3>
-                <div class="form-row">
-                    <div class="form-group"><label>العضو</label><select id="transMemberId"></select></div>
-                    <div class="form-group"><label>الوصف</label><input type="text" id="transDesc"></div>
-                    <div class="form-group"><label>المبلغ</label><input type="number" id="transAmount"></div>
-                    <div class="form-group"><label>التصنيف</label><input type="text" id="transCategory"></div>
-                </div>
-                <button class="btn-primary" onclick="addTransaction()">إضافة</button>
+            <h3>المعاملات المالية</h3>
+            <div class="table-wrapper">
+                <table id="transactionsTable">
+                    <thead><tr><th>الوصف</th><th>المبلغ</th><th>العضو</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                    <tbody></tbody>
+                </table>
             </div>
-            <div class="search-box">
-                <input type="text" id="searchTrans" placeholder="بحث...">
-                <select id="filterStatus"><option value="all">الكل</option><option value="pending">معلقة</option><option value="auditor_reviewed">بانتظار المدير</option><option value="approved">معتمدة</option><option value="rejected">مرفوضة</option></select>
-            </div>
-            <table id="transactionsTable"><thead><tr><th>العضو</th><th>الوصف</th><th>المبلغ</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody></tbody></table>
         </div>
-
-        <!-- تبويب الإنتاج -->
         <div id="productionsTab" class="tab-content">
-            <div class="form-card">
-                <h3>إضافة إنتاج</h3>
-                <div class="form-row">
-                    <div class="form-group"><label>الخياط</label><select id="prodMemberId"></select></div>
-                    <div class="form-group"><label>المنتج</label><input type="text" id="prodName"></div>
-                    <div class="form-group"><label>الموديل</label><input type="text" id="prodModel"></div>
-                    <div class="form-group"><label>الكمية</label><input type="number" id="prodQuantity"></div>
-                    <div class="form-group"><label>السعر</label><input type="number" id="prodPrice"></div>
-                </div>
-                <button class="btn-primary" onclick="addProduction()">إضافة</button>
-            </div>
-            <table id="productionsTable"><thead><tr><th>الخياط</th><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody></tbody></table>
+            <h3>إنتاج الخياطين</h3>
+            <table id="productionsTable"><thead><tr><th>المنتج</th><th>الكمية</th><th>الخياط</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody></tbody></table>
         </div>
-
-        <!-- تبويب الاعتراضات -->
         <div id="objectionsTab" class="tab-content">
-            <table id="objectionsTable"><thead><tr><th>العضو</th><th>النوع</th><th>السبب</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody></tbody></table>
+            <h3>الاعتراضات</h3>
+            <table id="objectionsTable"><thead><tr><th>السبب</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody></tbody></table>
         </div>
-
-        <!-- تبويب الأعضاء -->
         <div id="membersTab" class="tab-content">
-            <div class="form-card">
-                <h3>إضافة عضو جديد</h3>
-                <div class="form-row">
-                    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="newMemberEmail"></div>
-                    <div class="form-group"><label>الاسم</label><input type="text" id="newMemberName"></div>
-                    <div class="form-group"><label>الدور</label><select id="newMemberRole"><option value="employee">موظف</option><option value="tailor">خياط</option><option value="auditor">مراجع</option></select></div>
-                </div>
-                <button class="btn-primary" onclick="addNewMember()">إضافة</button>
-            </div>
-            <table id="membersTable"><thead><tr><th>البريد</th><th>الاسم</th><th>الدور</th><th>الإجراءات</th></tr></thead><tbody></tbody></table>
+            <h3>إدارة الأعضاء</h3>
+            <table id="membersTable"><thead><tr><th>الاسم</th><th>الدور</th><th>حذف</th></tr></thead><tbody></tbody></table>
         </div>
     </div>
-
     <script type="module">
-        import { supabase, getCurrentUser, getAllMembers, getTransactions, addTransaction, reviewTransaction, approveTransaction, getProductions, addProduction, reviewProduction, approveProduction, getObjections, resolveObjection, signOut } from './supabase.js';
-
+        import { supabase, getCurrentUser, approveTransaction, approveProduction, resolveObjection, getAllProfiles, addAuditLog } from './supabase.js';
         let currentUser = null;
-        let allTransactions = [], allProductions = [], allObjections = [], allMembers = [];
-
         async function init() {
             currentUser = await getCurrentUser();
-            if (!currentUser || currentUser.role !== 'admin') { window.location.href = 'index.html'; return; }
-            document.getElementById('adminName').innerText = currentUser.name;
-            await loadMembers();
+            if (!currentUser || currentUser.role !== 'admin') {
+                window.location.href = 'index.html';
+                return;
+            }
             await loadTransactions();
             await loadProductions();
             await loadObjections();
-            await loadMembersTable();
+            await loadMembers();
         }
-
-        async function loadMembers() {
-            const { data } = await supabase.from('profiles').select('id, name, role');
-            allMembers = data || [];
-            const selects = ['transMemberId', 'prodMemberId'];
-            selects.forEach(sel => {
-                const select = document.getElementById(sel);
-                if (select) select.innerHTML = '<option value="">اختر</option>' + allMembers.filter(m => m.role !== 'admin').map(m => `<option value="${m.id}">${m.name}</option>`).join('');
-            });
-        }
-
         async function loadTransactions() {
-            allTransactions = await getTransactions();
-            filterTransactions();
-        }
-        function filterTransactions() {
-            const search = document.getElementById('searchTrans')?.value.toLowerCase() || '';
-            const status = document.getElementById('filterStatus')?.value || 'all';
-            let filtered = allTransactions.filter(t => (t.description?.toLowerCase().includes(search) || t.members?.name?.toLowerCase().includes(search)));
-            if (status !== 'all') filtered = filtered.filter(t => t.status === status);
+            const { data } = await supabase.from('transactions').select('*, profiles(name)').order('date', { ascending: false });
             const tbody = document.querySelector('#transactionsTable tbody');
-            tbody.innerHTML = filtered.map(t => `<tr>
-                <td>${t.members?.name || t.member_id}</td><td>${t.description}</td><td>${t.amount} ريال</td>
-                <td><span class="badge badge-${t.status}">${t.status === 'pending' ? 'معلقة' : t.status === 'auditor_reviewed' ? 'بانتظار المدير' : t.status === 'approved' ? 'معتمدة' : 'مرفوضة'}</span></td>
-                <td>${t.status === 'auditor_reviewed' ? `<button class="btn-sm btn-success" onclick="approveTrans('${t.id}')">اعتماد</button><button class="btn-sm btn-danger" onclick="rejectTrans('${t.id}')">رفض</button>` : ''}</td>
-            </tr>`).join('');
+            tbody.innerHTML = data.map(t => `
+                <tr>
+                    <td>${t.description}</td>
+                    <td>${t.amount} ريال</td>
+                    <td>${t.profiles?.name || t.member_id}</td>
+                    <td><span class="badge badge-${t.status}">${t.status}</span></td>
+                    <td>${t.status === 'auditor_reviewed' ? `<button class="btn-sm btn-success" onclick="approveTrans('${t.id}')">اعتماد</button>` : ''}</td>
+                </tr>
+            `).join('');
         }
-        window.approveTrans = async (id) => { await approveTransaction(id); loadTransactions(); };
-        window.rejectTrans = async (id) => { const reason = prompt('سبب الرفض'); if(reason) await reviewTransaction(id, false, reason); loadTransactions(); };
-        window.addTransaction = async () => {
-            const member_id = document.getElementById('transMemberId').value;
-            const amount = parseFloat(document.getElementById('transAmount').value);
-            if (!member_id || !amount) return alert('املأ الحقول');
-            await addTransaction({ member_id, amount, description: document.getElementById('transDesc').value, category: document.getElementById('transCategory').value });
-            loadTransactions();
+        window.approveTrans = async (id) => {
+            await approveTransaction(id, currentUser.id);
+            await loadTransactions();
         };
-
         async function loadProductions() {
-            allProductions = await getProductions();
+            const { data } = await supabase.from('productions').select('*, profiles(name)');
             const tbody = document.querySelector('#productionsTable tbody');
-            tbody.innerHTML = allProductions.map(p => `<tr>
-                <td>${p.members?.name || p.member_id}</td><td>${p.product_name}</td><td>${p.quantity}</td><td>${p.price || '-'}</td>
-                <td><span class="badge badge-${p.status}">${p.status === 'pending' ? 'معلق' : p.status === 'auditor_reviewed' ? 'بانتظار المدير' : 'معتمد'}</span></td>
-                <td>${p.status === 'auditor_reviewed' ? `<button class="btn-sm btn-success" onclick="approveProd('${p.id}')">اعتماد</button>` : ''}</td>
-            </tr>`).join('');
+            tbody.innerHTML = data.map(p => `
+                <tr>
+                    <td>${p.product_name}</td>
+                    <td>${p.quantity}</td>
+                    <td>${p.profiles?.name || p.member_id}</td>
+                    <td><span class="badge badge-${p.status}">${p.status}</span></td>
+                    <td>${p.status === 'auditor_reviewed' ? `<button class="btn-sm btn-success" onclick="approveProd('${p.id}')">اعتماد</button>` : ''}</td>
+                </tr>
+            `).join('');
         }
-        window.approveProd = async (id) => { await approveProduction(id); loadProductions(); };
-        window.addProduction = async () => {
-            const member_id = document.getElementById('prodMemberId').value;
-            const quantity = parseInt(document.getElementById('prodQuantity').value);
-            if (!member_id || !quantity) return alert('املأ الحقول');
-            await addProduction({ member_id, product_name: document.getElementById('prodName').value, model: document.getElementById('prodModel').value, quantity, price: parseFloat(document.getElementById('prodPrice').value) || null });
-            loadProductions();
+        window.approveProd = async (id) => {
+            await approveProduction(id, currentUser.id);
+            await loadProductions();
         };
-
         async function loadObjections() {
-            allObjections = await getObjections();
+            const { data } = await supabase.from('objections').select('*');
             const tbody = document.querySelector('#objectionsTable tbody');
-            tbody.innerHTML = allObjections.map(o => `<tr>
-                <td>${o.members?.name || o.member_id}</td><td>${o.transaction_id ? 'معاملة' : 'إنتاج'}</td><td>${o.reason}</td>
-                <td><span class="badge badge-${o.status}">${o.status === 'pending' ? 'مفتوح' : 'تم الرد'}</span></td>
-                <td>${o.status === 'pending' ? `<button class="btn-sm btn-warning" onclick="resolveObj('${o.id}')">رد</button>` : ''}</td>
-            </tr>`).join('');
+            tbody.innerHTML = data.map(o => `
+                <tr>
+                    <td>${o.reason}</td>
+                    <td>${o.status}</td>
+                    <td>${o.status === 'pending' ? `<button class="btn-sm btn-warning" onclick="resolveObj('${o.id}')">رد</button>` : ''}</td>
+                </tr>
+            `).join('');
         }
-        window.resolveObj = async (id) => { const response = prompt('الرد على الاعتراض'); if(response) await resolveObjection(id, response); loadObjections(); };
-
-        async function loadMembersTable() {
-            const { data } = await supabase.from('profiles').select('id, email, name, role');
-            const tbody = document.querySelector('#membersTable tbody');
-            tbody.innerHTML = (data || []).map(m => `<tr><td>${m.email}</td><td>${m.name}</td><td>${m.role}</td><td>${m.role !== 'admin' ? `<button class="btn-sm btn-danger" onclick="deleteMember('${m.id}')">حذف</button>` : ''}</td></tr>`).join('');
-        }
-        window.addNewMember = async () => {
-            alert('لإضافة عضو جديد، استخدم واجهة Authentication في Supabase ثم أضف بروفايله يدوياً.');
+        window.resolveObj = async (id) => {
+            const response = prompt('الرد على الاعتراض:');
+            if (response) await resolveObjection(id, currentUser.id, response);
+            await loadObjections();
         };
-        window.deleteMember = async (id) => { if(confirm('حذف العضو؟')) await supabase.from('profiles').delete().eq('id', id); loadMembersTable(); };
-
-        window.switchTab = (tab) => {
+        async function loadMembers() {
+            const members = await getAllProfiles();
+            const tbody = document.querySelector('#membersTable tbody');
+            tbody.innerHTML = members.map(m => `
+                <tr>
+                    <td>${m.name}</td>
+                    <td>${m.role}</td>
+                    <td>${m.role !== 'admin' ? `<button class="btn-sm btn-danger" onclick="deleteMember('${m.id}')">حذف</button>` : '-'}</td>
+                </tr>
+            `).join('');
+        }
+        window.deleteMember = async (id) => {
+            if (confirm('حذف العضو نهائياً؟')) {
+                await supabase.rpc('delete_user', { user_id: id });
+                await loadMembers();
+            }
+        };
+        function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(`${tab}Tab`).classList.add('active');
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        };
-        window.logout = async () => { await signOut(); window.location.href = 'index.html'; };
+        }
+        window.switchTab = switchTab;
+        async function logout() { await supabase.auth.signOut(); localStorage.clear(); window.location.href = 'index.html'; }
+        window.logout = logout;
         init();
     </script>
 </body>
