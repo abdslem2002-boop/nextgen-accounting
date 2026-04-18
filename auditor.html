@@ -2,73 +2,58 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مراجع الحسابات</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Tahoma, Arial, sans-serif; background: #f0f2f5; }
-        .header { background: #1e3a5f; color: white; padding: 15px 30px; display: flex; justify-content: space-between; }
-        .logout-btn { background: #dc3545; padding: 8px 20px; border: none; border-radius: 30px; cursor: pointer; }
-        .container { max-width: 1300px; margin: 25px auto; padding: 0 25px; }
-        .section { background: white; border-radius: 20px; padding: 20px; margin-bottom: 25px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; }
-        .badge-pending { background: #ffc107; }
-        .badge-auditor_reviewed { background: #17a2b8; color: white; }
-        .btn-sm { padding: 5px 12px; border: none; border-radius: 20px; cursor: pointer; }
-        .btn-success { background: #28a745; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
-    </style>
+    <title>لوحة المراجع</title>
+    <style>/* نفس ستايل admin.html تقريباً */</style>
 </head>
 <body>
-    <div class="header">
-        <h2>🔍 مراجع الحسابات</h2>
-        <button class="logout-btn" onclick="logout()">خروج</button>
-    </div>
+    <div class="header"><h2>🔍 لوحة المراجع</h2><button onclick="logout()">خروج</button></div>
     <div class="container">
-        <div class="section">
-            <h3>المعاملات المالية</h3>
-            <table id="transactionsTable"><thead><tr><th>العضو</th><th>الوصف</th><th>المبلغ</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody></tbody></table>
-        </div>
-        <div class="section">
-            <h3>إنتاج الخياطين</h3>
-            <table id="productionsTable"><thead><tr><th>الخياط</th><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody></tbody></table>
-        </div>
+        <h3>معاملات بانتظار المراجعة</h3>
+        <table id="transactionsTable"><thead><tr><th>الوصف</th><th>المبلغ</th><th>العضو</th><th>إجراء</th></tr></thead><tbody></tbody></table>
+        <h3>إنتاج بانتظار المراجعة</h3>
+        <table id="productionsTable"><thead><tr><th>المنتج</th><th>الكمية</th><th>الخياط</th><th>إجراء</th></tr></thead><tbody></tbody></table>
     </div>
     <script type="module">
-        import { getCurrentUser, getTransactions, reviewTransaction, getProductions, reviewProduction, signOut } from './supabase.js';
-        let currentUser = null;
+        import { supabase, getCurrentUser, reviewTransaction, reviewProduction } from './supabase.js';
+        let currentUser;
         async function init() {
             currentUser = await getCurrentUser();
-            if (!currentUser || currentUser.role !== 'auditor') { window.location.href = 'index.html'; return; }
-            await loadTransactions();
-            await loadProductions();
+            if (!currentUser || currentUser.role !== 'auditor') window.location.href = 'index.html';
+            await loadPendingTransactions();
+            await loadPendingProductions();
         }
-        async function loadTransactions() {
-            const data = await getTransactions();
-            const pending = data.filter(t => t.status === 'pending');
+        async function loadPendingTransactions() {
+            const { data } = await supabase.from('transactions').select('*, profiles(name)').eq('status', 'pending');
             const tbody = document.querySelector('#transactionsTable tbody');
-            tbody.innerHTML = pending.map(t => `<tr>
-                <td>${t.members?.name || t.member_id}</td><td>${t.description}</td><td>${t.amount}</td>
-                <td><span class="badge-pending">معلقة</span></td>
-                <td><button class="btn-sm btn-success" onclick="approve('${t.id}')">تأكيد</button>
-                <button class="btn-sm btn-danger" onclick="reject('${t.id}')">رفض</button></td>
-            </tr>`).join('');
+            tbody.innerHTML = data.map(t => `
+                <tr>
+                    <td>${t.description}</td><td>${t.amount}</td><td>${t.profiles?.name}</td>
+                    <td><button class="btn-sm btn-success" onclick="review('${t.id}', 'approve')">موافقة</button>
+                    <button class="btn-sm btn-danger" onclick="review('${t.id}', 'reject')">رفض</button></td>
+                </tr>
+            `).join('');
         }
-        window.approve = async (id) => { await reviewTransaction(id, true); loadTransactions(); };
-        window.reject = async (id) => { const reason = prompt('سبب الرفض'); if(reason) await reviewTransaction(id, false, reason); loadTransactions(); };
-        async function loadProductions() {
-            const data = await getProductions();
-            const pending = data.filter(p => p.status === 'pending');
+        window.review = async (id, action) => {
+            const reason = action === 'reject' ? prompt('سبب الرفض:') : null;
+            await reviewTransaction(id, currentUser.id, action, reason);
+            await loadPendingTransactions();
+        };
+        async function loadPendingProductions() {
+            const { data } = await supabase.from('productions').select('*, profiles(name)').eq('status', 'pending');
             const tbody = document.querySelector('#productionsTable tbody');
-            tbody.innerHTML = pending.map(p => `<tr>
-                <td>${p.members?.name || p.member_id}</td><td>${p.product_name}</td><td>${p.quantity}</td><td>${p.price || '-'}</td>
-                <td><span class="badge-pending">معلق</span></td>
-                <td><button class="btn-sm btn-success" onclick="approveProd('${p.id}')">تأكيد</button></td>
-            </tr>`).join('');
+            tbody.innerHTML = data.map(p => `
+                <tr>
+                    <td>${p.product_name}</td><td>${p.quantity}</td><td>${p.profiles?.name}</td>
+                    <td><button class="btn-sm btn-success" onclick="reviewProd('${p.id}')">موافقة</button></td>
+                </tr>
+            `).join('');
         }
-        window.approveProd = async (id) => { await reviewProduction(id, true); loadProductions(); };
-        window.logout = async () => { await signOut(); window.location.href = 'index.html'; };
+        window.reviewProd = async (id) => {
+            await reviewProduction(id, currentUser.id);
+            await loadPendingProductions();
+        };
+        async function logout() { await supabase.auth.signOut(); window.location.href = 'index.html'; }
+        window.logout = logout;
         init();
     </script>
 </body>
