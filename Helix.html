@@ -1,395 +1,397 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 محادثة مجانية - Hugging Face</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-        }
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 800px;
-            height: 95vh;
-            max-height: 750px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 20px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        header h1 { font-size: 20px; }
-        header p { font-size: 12px; opacity: 0.9; margin-top: 2px; }
-        #chat-box {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background: #f8f9fa;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .message {
-            padding: 10px 16px;
-            border-radius: 16px;
-            max-width: 85%;
-            word-wrap: break-word;
-            animation: fadeIn 0.3s ease;
-            line-height: 1.5;
-            font-size: 14px;
-        }
-        .user-message {
-            background: #667eea;
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-        .bot-message {
-            background: white;
-            color: #333;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .info-message {
-            background: #e3f2fd;
-            color: #0d47a1;
-            align-self: center;
-            max-width: 92%;
-            text-align: center;
-            border-radius: 10px;
-            padding: 8px 14px;
-            font-size: 13px;
-        }
-        .error-message {
-            background: #fde8e8;
-            color: #c0392b;
-            align-self: center;
-            max-width: 92%;
-            text-align: center;
-            border: 1px solid #f5c6cb;
-            border-radius: 10px;
-            padding: 8px 14px;
-            font-size: 13px;
-        }
-        .typing-indicator {
-            background: white;
-            align-self: flex-start;
-            border-radius: 16px;
-            padding: 10px 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .typing-indicator span {
-            animation: blink 1.4s infinite both;
-            display: inline-block;
-            font-size: 18px;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes blink { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .input-area {
-            display: flex;
-            padding: 10px 15px;
-            background: white;
-            border-top: 1px solid #e8e8e8;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-        #user-input {
-            flex: 1;
-            padding: 10px 16px;
-            border: 2px solid #e8e8e8;
-            border-radius: 25px;
-            font-size: 14px;
-            outline: none;
-            background: #fafafa;
-        }
-        #user-input:focus { border-color: #667eea; background: white; }
-        #send-btn {
-            padding: 10px 22px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        #send-btn:hover:not(:disabled) { transform: scale(1.05); }
-        #send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .settings-area {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 6px 15px;
-            background: #f8f9fa;
-            border-top: 1px solid #e8e8e8;
-            flex-wrap: wrap;
-        }
-        .settings-area button {
-            background: transparent;
-            border: none;
-            color: #667eea;
-            font-size: 12px;
-            cursor: pointer;
-            padding: 4px 8px;
-            font-weight: 500;
-        }
-        .settings-area button:hover { color: #764ba2; }
-        .settings-area .status {
-            font-size: 11px;
-            color: #888;
-            background: #f0f0f0;
-            padding: 2px 10px;
-            border-radius: 12px;
-        }
-        #chat-box::-webkit-scrollbar { width: 5px; }
-        #chat-box::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        #chat-box::-webkit-scrollbar-thumb { background: #667eea; border-radius: 10px; }
-        @media (max-width: 600px) {
-            .container { height: 98vh; max-height: none; border-radius: 12px; }
-            .message { max-width: 92%; font-size: 13px; padding: 8px 12px; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 ذكاء اصطناعي بسيط</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Tahoma', system-ui, sans-serif;
+    }
+    body {
+      background: linear-gradient(145deg, #0b0e1a 0%, #1a1f2f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .ai-container {
+      max-width: 700px;
+      width: 100%;
+      background: rgba(25, 32, 48, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 3rem 3rem 2rem 2rem;
+      box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 1.8rem 1.8rem 2rem;
+      transition: all 0.2s;
+    }
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #f0f3ff;
+      font-weight: 500;
+      font-size: 1.9rem;
+      letter-spacing: -0.5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    h1 span {
+      background: #4f7dff;
+      font-size: 1.2rem;
+      padding: 0.2rem 0.9rem;
+      border-radius: 60px;
+      color: white;
+      margin-right: 0.5rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(79, 125, 255, 0.3);
+    }
+    .chat-box {
+      background: rgba(12, 16, 26, 0.6);
+      border-radius: 2rem;
+      padding: 1.2rem 1.2rem 0.8rem;
+      min-height: 280px;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.4);
+      margin-bottom: 1.2rem;
+      scroll-behavior: smooth;
+    }
+    .chat-box::-webkit-scrollbar {
+      width: 5px;
+    }
+    .chat-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .chat-box::-webkit-scrollbar-thumb {
+      background: #3b4b6b;
+      border-radius: 20px;
+    }
+    .message {
+      display: flex;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.3s ease-out;
+    }
+    .message.user {
+      justify-content: flex-end;
+    }
+    .message.ai {
+      justify-content: flex-start;
+    }
+    .bubble {
+      max-width: 80%;
+      padding: 0.8rem 1.3rem;
+      border-radius: 2.2rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      word-break: break-word;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .user .bubble {
+      background: #4f7dff;
+      color: white;
+      border-bottom-right-radius: 0.6rem;
+      box-shadow: 0 6px 14px rgba(79, 125, 255, 0.25);
+    }
+    .ai .bubble {
+      background: rgba(46, 56, 80, 0.7);
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: #e8edff;
+      border-bottom-left-radius: 0.6rem;
+    }
+    .bubble .loading-dots::after {
+      content: '...';
+      animation: dots 1.2s steps(4) infinite;
+    }
+    @keyframes dots {
+      0% { content: ''; }
+      25% { content: '.'; }
+      50% { content: '..'; }
+      75% { content: '...'; }
+    }
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .input-area {
+      display: flex;
+      gap: 0.7rem;
+      background: rgba(18, 23, 37, 0.7);
+      padding: 0.4rem;
+      border-radius: 4rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(6px);
+      transition: border 0.2s;
+    }
+    .input-area:focus-within {
+      border-color: #4f7dff80;
+      box-shadow: 0 0 0 3px rgba(79, 125, 255, 0.2);
+    }
+    #userInput {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 0.9rem 1.4rem;
+      font-size: 1rem;
+      color: #f0f4ff;
+      outline: none;
+      min-width: 0;
+    }
+    #userInput::placeholder {
+      color: #8b99c0;
+      font-weight: 300;
+      letter-spacing: 0.3px;
+    }
+    #sendBtn {
+      background: #4f7dff;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.8rem 1.8rem;
+      border-radius: 3rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      box-shadow: 0 6px 16px rgba(79, 125, 255, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    #sendBtn:hover {
+      background: #3b69f0;
+      transform: scale(0.97);
+      box-shadow: 0 4px 12px rgba(79, 125, 255, 0.4);
+    }
+    #sendBtn:active {
+      transform: scale(0.93);
+    }
+    #sendBtn:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      filter: grayscale(0.3);
+    }
+    .footer-note {
+      margin-top: 1rem;
+      text-align: center;
+      color: #6d7ba3;
+      font-size: 0.75rem;
+      letter-spacing: 0.3px;
+      opacity: 0.7;
+    }
+    .footer-note i {
+      font-style: normal;
+      background: #2b3652;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      margin: 0 4px;
+    }
+    @media (max-width: 480px) {
+      .ai-container { padding: 1rem; }
+      h1 { font-size: 1.5rem; }
+      #sendBtn { padding: 0.6rem 1.2rem; }
+    }
+  </style>
 </head>
 <body>
-
-<div class="container">
-    <header>
-        <h1>🤖 محادثتي الذكية</h1>
-        <p>✨ مجاني بالكامل - بدون مفتاح أو تسجيل</p>
-    </header>
-
-    <div id="chat-box"></div>
-
-    <div class="settings-area">
-        <button id="clear-chat-btn">🗑️ مسح المحادثة</button>
-        <span class="status" id="status-text">🟢 جاهز</span>
+  <div class="ai-container">
+    <h1>
+      <span>AI</span> مساعد ذكي
+    </h1>
+    <div class="chat-box" id="chatBox">
+      <!-- الرسائل ستظهر هنا ديناميكياً -->
+      <div class="message ai">
+        <div class="bubble">
+          👋 مرحباً! أنا ذكاء اصطناعي بسيط. اسألني أي شيء.
+        </div>
+      </div>
     </div>
-
     <div class="input-area">
-        <input type="text" id="user-input" placeholder="اكتب رسالتك هنا..." autofocus>
-        <button id="send-btn">إرسال ➤</button>
+      <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." autofocus>
+      <button id="sendBtn">إرسال</button>
     </div>
-</div>
+    <div class="footer-note">
+      <i>⚡</i> يعمل بالكامل في المتصفح <i>🧠</i>
+    </div>
+  </div>
 
-<script>
-    // ===== استخدام Hugging Face Inference API (بدون مفتاح) =====
-    const chatBox = document.getElementById('chat-box');
-    const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
-    const clearBtn = document.getElementById('clear-chat-btn');
-    const statusText = document.getElementById('status-text');
+  <script>
+    (function() {
+      "use strict";
 
-    let chatHistory = [];
-    let isWaiting = false;
+      // عناصر DOM
+      const chatBox = document.getElementById('chatBox');
+      const userInput = document.getElementById('userInput');
+      const sendBtn = document.getElementById('sendBtn');
 
-    function updateStatus(text, isError = false) {
-        statusText.textContent = text;
-        statusText.style.color = isError ? '#c0392b' : '#2e7d32';
-    }
+      // حالة التحميل (لمنع التكرار)
+      let isLoading = false;
 
-    function addMessage(text, sender, type = '') {
-        const div = document.createElement('div');
-        div.className = `message ${sender}-message`;
-        if (type) div.classList.add(type);
-        div.textContent = text;
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
-        return div;
-    }
+      // ================= قاعدة المعرفة البسيطة =================
+      // ذكاء اصطناعي ردود افتراضية (يمكن توسيعها)
+      function getAIResponse(userMessage) {
+        const msg = userMessage.trim().toLowerCase();
 
-    function showTyping() {
-        const div = document.createElement('div');
-        div.className = 'message bot-message typing-indicator';
-        div.id = 'typing';
-        div.innerHTML = `<span>.</span><span>.</span><span>.</span>`;
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
-        return div;
-    }
-
-    function removeTyping() {
-        const el = document.getElementById('typing');
-        if (el) el.remove();
-    }
-
-    // === دالة الاتصال بـ Hugging Face مع إعادة المحاولة التلقائية ===
-    async function callHuggingFace(message, retries = 3) {
-        // استخدام نموذج صغير ومجاني ومتوافق مع الاستخدام بدون مفتاح
-        const MODEL = "Qwen/Qwen2.5-1.5B-Instruct";
-        const API_URL = `https://api-inference.huggingface.co/models/${MODEL}`;
-
-        // بناء رسائل المحادثة (آخر 10 رسائل فقط للسياق)
-        const conversation = chatHistory.slice(-10).map(msg => ({
-            role: msg.role === 'user' ? 'user' : 'assistant',
-            content: msg.content
-        }));
-
-        const payload = {
-            messages: [
-                { role: 'system', content: 'أنت مساعد ذكي ومفيد. أجب باللغة العربية دائماً. كن مختصراً وواضحاً.' },
-                ...conversation,
-                { role: 'user', content: message }
-            ],
-            parameters: {
-                max_new_tokens: 500,
-                temperature: 0.7,
-                top_p: 0.9,
-                do_sample: true,
-                return_full_text: false
-            }
-        };
-
-        let lastError = null;
-
-        for (let attempt = 1; attempt <= retries; attempt++) {
-            try {
-                updateStatus(`⏳ جاري المحاولة ${attempt}/${retries}...`);
-                
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                // حالة 503 تعني أن النموذج قيد التحميل (يحدث في الخدمة المجانية)
-                if (response.status === 503) {
-                    const errorData = await response.json();
-                    if (errorData.error?.includes('loading')) {
-                        const waitTime = Math.min(10 * attempt, 30);
-                        updateStatus(`⏳ النموذج يتحمّل... انتظر ${waitTime} ثانية`);
-                        await new Promise(r => setTimeout(r, waitTime * 1000));
-                        continue;
-                    }
-                }
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.error || `HTTP ${response.status}`);
-                }
-
-                const data = await response.json();
-                
-                // استخراج النص من الرد
-                let reply = '';
-                if (data.choices && data.choices[0]?.message?.content) {
-                    reply = data.choices[0].message.content;
-                } else if (data.generated_text) {
-                    reply = data.generated_text;
-                } else if (data[0]?.generated_text) {
-                    reply = data[0].generated_text;
-                } else {
-                    reply = 'عذراً، لم أتلقَ رداً.';
-                }
-
-                updateStatus('🟢 جاهز');
-                return reply;
-
-            } catch (error) {
-                lastError = error;
-                console.warn(`محاولة ${attempt} فشلت:`, error.message);
-                
-                if (attempt < retries) {
-                    const waitTime = Math.min(5 * attempt, 20);
-                    updateStatus(`⚠️ خطأ: ${error.message.slice(0, 30)}... إعادة المحاولة بعد ${waitTime}ث`);
-                    await new Promise(r => setTimeout(r, waitTime * 1000));
-                }
-            }
+        // مجموعة ردود ذكية (معرفة بسيطة)
+        if (msg.includes('مرحبا') || msg.includes('سلام') || msg.includes('اهلا')) {
+          return 'وعليكم السلام! 👋 كيف يمكنني مساعدتك اليوم؟';
+        }
+        if (msg.includes('كيف حالك') || msg.includes('اخبارك')) {
+          return 'أنا بخير، شكراً لسؤالك! 🌟 أنا هنا لمساعدتك.';
+        }
+        if (msg.includes('اسمك') || msg.includes('من انت')) {
+          return 'أنا مساعد ذكي، يمكنك تسميتي "AI بسيط". صُنعت لمساعدتك في الإجابات السريعة.';
+        }
+        if (msg.includes('الطقس') || msg.includes('الجو') || msg.includes('توقعات')) {
+          return '🌤️ ليس لدي بيانات حية عن الطقس، لكن يمكنك البحث عن تطبيق الطقس المحلي!';
+        }
+        if (msg.includes('شكرا') || msg.includes('مشكور') || msg.includes('thanks')) {
+          return 'العفو! 😊 سعيد بمساعدتك، هل هناك شيء آخر؟';
+        }
+        if (msg.includes('معنى الحياة') || msg.includes('الهدف من الحياة')) {
+          return '🎯 سؤال عميق! كثيرون يرون أن المعنى يكمن في العلاقات، التعلم، وترك أثر إيجابي.';
+        }
+        if (msg.includes('رياضيات') || msg.includes('حساب') || msg.includes('جمع') || msg.includes('طرح')) {
+          return '🧮 أحاول حل المسائل البسيطة، لكني لست آلة حاسبة متقدمة. هل تريد مساعدة في شيء محدد؟';
+        }
+        if (msg.includes('صباح') || msg.includes('مساء')) {
+          return '🌅 صباح النور! (أو مساء الخير) كيف يمضي يومك؟';
+        }
+        if (msg.includes('وداعا') || msg.includes('مع السلامة') || msg.includes('باي')) {
+          return '👋 وداعاً! أتمنى لك يوماً طيباً. عد متى شئت.';
         }
 
-        throw lastError || new Error('فشلت جميع المحاولات');
-    }
+        // ردود افتراضية ذكية حسب الكلمات المفتاحية
+        if (msg.includes('اخبرني') || msg.includes('حدثني') || msg.includes('قول لي')) {
+          return '📚 لدي بعض المعلومات العامة. هل لديك سؤال محدد؟';
+        }
+        if (msg.includes('مساعدة') || msg.includes('ساعد')) {
+          return '🆘 بالتأكيد! أنا هنا لمساعدتك. اسأل عن أي موضوع.';
+        }
 
-    // === دالة إرسال الرسالة الأساسية ===
-    async function sendMessage(message) {
-        if (isWaiting) return;
-        if (!message.trim()) return;
+        // إذا لم يجد أي تطابق → رد عام
+        return '🤔 هذا سؤال مثير للاهتمام! مع الأسف معرفتي محدودة، لكني أحاول التعلم. هل يمكنك إعادة صياغة السؤال؟';
+      }
 
-        addMessage(message, 'user');
-        userInput.value = '';
-        userInput.disabled = true;
+      // ============== إضافة رسالة إلى الواجهة ==============
+      function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.textContent = text;
+
+        messageDiv.appendChild(bubble);
+        chatBox.appendChild(messageDiv);
+        // تمرير للأسفل
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return messageDiv;
+      }
+
+      // ============== عرض حالة "جاري التفكير" ==============
+      function showTypingIndicator() {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message ai';
+        messageDiv.id = 'typingIndicator';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.innerHTML = 'جاري التفكير <span class="loading-dots"></span>';
+
+        messageDiv.appendChild(bubble);
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function removeTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+          indicator.remove();
+        }
+      }
+
+      // ============== المعالج الأساسي للرسالة ==============
+      function handleSend() {
+        const userText = userInput.value.trim();
+        if (!userText) {
+          // اهتزاز بسيط أو تنبيه
+          userInput.style.borderColor = '#ff6b7a';
+          setTimeout(() => userInput.style.borderColor = '', 500);
+          return;
+        }
+
+        // منع الإرسال المتكرر أثناء التحميل
+        if (isLoading) return;
+        isLoading = true;
         sendBtn.disabled = true;
-        isWaiting = true;
+        userInput.disabled = true;
 
-        showTyping();
-        updateStatus('⏳ جاري التفكير...');
+        // إضافة رسالة المستخدم
+        addMessage(userText, 'user');
 
-        try {
-            const reply = await callHuggingFace(message);
-            
-            removeTyping();
-            addMessage(reply, 'bot');
-
-            chatHistory.push(
-                { role: 'user', content: message },
-                { role: 'assistant', content: reply }
-            );
-            if (chatHistory.length > 50) chatHistory = chatHistory.slice(-50);
-
-        } catch (error) {
-            removeTyping();
-            updateStatus('❌ خطأ', true);
-            addMessage(`❌ ${error.message || 'حدث خطأ غير متوقع. حاول مرة أخرى.'}`, 'bot', 'error-message');
-        } finally {
-            userInput.disabled = false;
-            sendBtn.disabled = false;
-            isWaiting = false;
-            userInput.focus();
-        }
-    }
-
-    // === الأحداث ===
-    function handleSend() {
-        const msg = userInput.value.trim();
-        if (msg) sendMessage(msg);
-    }
-
-    sendBtn.addEventListener('click', handleSend);
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-        }
-    });
-
-    clearBtn.addEventListener('click', () => {
-        if (chatHistory.length === 0) return;
-        if (confirm('مسح المحادثة؟')) {
-            chatBox.innerHTML = '';
-            chatHistory = [];
-            addMessage('🗑️ تم مسح المحادثة.', 'bot', 'info-message');
-        }
-    });
-
-    // === رسالة الترحيب ===
-    window.addEventListener('DOMContentLoaded', () => {
-        addMessage('👋 مرحباً! أنا مساعدك الذكي.', 'bot', 'info-message');
-        addMessage('💡 يعمل بدون مفتاح API أو تسجيل دخول!', 'bot', 'info-message');
-        addMessage('⚡ قد يستغرق الرد 5-15 ثانية في أول مرة.', 'bot', 'info-message');
-        updateStatus('🟢 جاهز');
+        // مسح الحقل
+        userInput.value = '';
         userInput.focus();
-    });
-</script>
 
+        // عرض مؤشر "جاري التفكير"
+        showTypingIndicator();
+
+        // محاكاة زمن استجابة الذكاء الاصطناعي (تأثير واقعي)
+        const delay = 400 + Math.random() * 600; // بين 0.4 و 1.0 ثانية
+
+        setTimeout(() => {
+          // إزالة مؤشر التحميل
+          removeTypingIndicator();
+
+          // الحصول على الرد
+          const reply = getAIResponse(userText);
+          addMessage(reply, 'ai');
+
+          // إعادة تمكين الإدخال
+          isLoading = false;
+          sendBtn.disabled = false;
+          userInput.disabled = false;
+          userInput.focus();
+
+        }, delay);
+      }
+
+      // ============== أحداث ==============
+      sendBtn.addEventListener('click', handleSend);
+
+      userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleSend();
+        }
+      });
+
+      // ============== بداية سريعة: رسالة ترحيب إضافية (اختياري) ==============
+      // يمكن إضافة رسالة ترحيب بعد تحميل الصفحة (موجودة بالفعل في HTML)
+      // لكن نضيف رسالة تفاعلية بعد ثانية
+      window.addEventListener('load', function() {
+        // تركيز تلقائي
+        userInput.focus();
+        // يمكن إضافة رسالة إضافية (ليست ضرورية)
+        // لكننا سنتركها هكذا
+      });
+
+      // ============== (توسعة) إمكانية إضافة ردود أكثر تعقيداً ==============
+      // يمكن للمستخدم تعديل دالة getAIResponse لإضافة المزيد من المعرفة
+
+      console.log('🧠 ذكاء اصطناعي بسيط جاهز!');
+    })();
+  </script>
 </body>
 </html>
