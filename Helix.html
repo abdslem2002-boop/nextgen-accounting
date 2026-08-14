@@ -60,7 +60,7 @@
 
         <div class="chat-box" id="chatBox">
             <div class="msg ai">
-                <div class="bubble">👋 مرحباً! أنا Groq، مجاني وسريع. أدخل مفتاح API للبدء.</div>
+                <div class="bubble">👋 مرحباً! أنا Groq (Llama 3.3 70B)، مجاني وسريع. أدخل مفتاح API للبدء.</div>
             </div>
         </div>
 
@@ -69,7 +69,7 @@
             <button id="sendBtn" disabled>إرسال</button>
         </div>
         <div class="footer">
-            <span>⚡ مجاني 100% • سريع جداً</span>
+            <span>⚡ مجاني 100% • Llama 3.3 70B</span>
         </div>
     </div>
 
@@ -100,7 +100,7 @@
                     localStorage.setItem('groq_api_key', key);
                     enableChat();
                     modelStatus.textContent = '✅ تم حفظ المفتاح!';
-                    addMessage('✅ تم تفعيل Groq! اسألني أي شيء.', 'ai');
+                    addMessage('✅ تم تفعيل Groq (Llama 3.3 70B)! اسألني أي شيء.', 'ai');
                 } else {
                     modelStatus.textContent = '❌ مفتاح غير صالح! يجب أن يبدأ بـ gsk_';
                     modelStatus.style.color = '#ff7a7a';
@@ -135,9 +135,10 @@
                             'Authorization': `Bearer ${apiKey}`
                         },
                         body: JSON.stringify({
-                            model: 'llama3-70b-8192',
+                            // ✅ النموذج المحدث (يدعم العربية)
+                            model: 'llama-3.3-70b-versatile',
                             messages: [
-                                { role: 'system', content: 'أنت مساعد ذكي، مفيد، ودود، تتحدث باللغة العربية الفصحى.' },
+                                { role: 'system', content: 'أنت مساعد ذكي، مفيد، ودود، تتحدث باللغة العربية الفصحى بطلاقة.' },
                                 ...conversationHistory,
                                 { role: 'user', content: userMessage }
                             ],
@@ -222,7 +223,7 @@
                 modelStatus.textContent = '✅ Groq جاهز!';
             }
 
-            console.log('🚀 Groq AI جاهز!');
+            console.log('🚀 Groq AI جاهز (Llama 3.3 70B)!');
         })();
     </script>
 </body>
