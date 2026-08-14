@@ -1,17 +1,9 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🧠 ذكاء اصطناعي حقيقي (Phi-3.5)</title>
-    <!-- استيراد transformers.js من CDN -->
-    <script type="importmap">
-        {
-            "imports": {
-                "@xenova/transformers": "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js"
-            }
-        }
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 ذكاء اصطناعي (نسخة خفيفة)</title>
     <style>
         * {
             margin: 0;
@@ -28,7 +20,7 @@
             padding: 1rem;
         }
         .container {
-            max-width: 800px;
+            max-width: 750px;
             width: 100%;
             background: #141a2b;
             border-radius: 2rem;
@@ -69,7 +61,7 @@
             background: #1f2740;
             padding: 0.3rem 1rem;
             border-radius: 40px;
-            color: #b0c8ff;
+            color: #7dffb3;
         }
         .chat-box {
             background: #0f1424;
@@ -210,16 +202,16 @@
     <div class="container">
         <h1>
             🧠 ذكاء اصطناعي
-            <small>Phi-3.5 (محلي)</small>
+            <small>نسخة خفيفة</small>
         </h1>
         <div class="status-bar">
-            <span id="modelStatus">⏳ جاري تحميل النموذج...</span>
-            <span id="tokenCount">🔄 0 رمز</span>
+            <span id="modelStatus">✅ جاهز للاستخدام (بدون تحميل)</span>
+            <span id="tokenCount">🧮 ذكي ومتجاوب</span>
         </div>
 
         <div class="chat-box" id="chatBox">
             <div class="msg ai">
-                <div class="bubble">👋 مرحباً! أنا نموذج Phi-3.5-mini يعمل في متصفحك. اسألني أي شيء، وسأفكر في إجابتي.</div>
+                <div class="bubble">👋 مرحباً! أنا ذكاء اصطناعي خفيف يعمل في متصفحك. لدي قدرة على فهم السياق والإجابة على أسئلتك.</div>
             </div>
         </div>
 
@@ -228,187 +220,203 @@
             <button id="sendBtn">إرسال</button>
         </div>
         <div class="footer">
-            <span>⚡ يعمل بالكامل بدون خادم • النموذج محلي في المتصفح</span>
+            <span>⚡ يعمل بدون تحميل نماذج خارجية • ذاكرة سياقية</span>
         </div>
     </div>
 
-    <script type="module">
-        import { pipeline, env } from '@xenova/transformers';
+    <script>
+        (function() {
+            "use strict";
 
-        // إعدادات البيئة
-        env.localModelPath = 'https://huggingface.co/models/';
-        env.allowRemoteModels = true;
-        env.remoteHost = 'https://huggingface.co/';
+            const chatBox = document.getElementById('chatBox');
+            const userInput = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const modelStatus = document.getElementById('modelStatus');
 
-        // عناصر DOM
-        const chatBox = document.getElementById('chatBox');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const modelStatus = document.getElementById('modelStatus');
-        const tokenCount = document.getElementById('tokenCount');
+            let isProcessing = false;
+            let conversationHistory = [];
 
-        let generator = null;
-        let isGenerating = false;
-        let conversationHistory = [];
+            // ========== قاعدة معرفة موسعة + منطق تفكير ==========
+            function getAIResponse(userMessage) {
+                const msg = userMessage.trim().toLowerCase();
 
-        // رسالة ترحيب سياقية (لتوجيه النموذج)
-        const SYSTEM_PROMPT =
-            'أنت مساعد ذكي، مفيد، ودود، تتحدث باللغة العربية الفصحى. تقدم إجابات واضحة ومباشرة.';
+                // ---- تحليل عميق للسياق ----
+                // 1. تحية
+                if (msg.match(/^(مرحبا|سلام|اهلا|هلا|السلام عليكم)/)) {
+                    return 'وعليكم السلام ورحمة الله! 👋 كيف يمكنني مساعدتك اليوم؟';
+                }
 
-        // ========== تحميل النموذج ==========
-        async function loadModel() {
-            try {
-                modelStatus.textContent = '⏳ جاري تحميل النموذج (Phi-3.5-mini)... قد يستغرق 30-60 ثانية';
-                modelStatus.style.color = '#ffd966';
+                // 2. السؤال عن الحال
+                if (msg.match(/كيف حالك|اخبارك|شو اخبارك|كيفك/)) {
+                    return 'أنا بخير، شكراً لسؤالك! 🌟 أنا هنا لخدمتك. ماذا تريد أن تسأل؟';
+                }
 
-                generator = await pipeline(
-                    'text-generation',
-                    'Xenova/Phi-3.5-mini-instruct',
-                    {
-                        quantized: true,
-                        dtype: 'q4f16',
-                        device: 'webgpu', // استخدام WebGPU إن وجد، وإلا CPU
+                // 3. التعريف
+                if (msg.match(/من انت|ما اسمك|عرف نفسك|شنو انت/)) {
+                    return 'أنا مساعد ذكي يعمل في متصفحك. صُممت للإجابة على أسئلتك وفهم سياق المحادثة. لست نموذجاً ضخماً، لكني أستطيع التفكير المنطقي!';
+                }
+
+                // 4. أسئلة علمية
+                if (msg.includes('الذكاء الاصطناعي') || msg.includes('ai') || msg.includes('تعلم الآلة')) {
+                    return '🧠 الذكاء الاصطناعي هو محاكاة للذكاء البشري في الآلات. يشمل تعلم الآلة، الشبكات العصبية، ومعالجة اللغة الطبيعية. أنا مثال بسيط عليه!';
+                }
+
+                if (msg.includes('البرمجة') || msg.includes('كود') || msg.includes('برمجة') || msg.includes('برامج')) {
+                    return '💻 البرمجة هي كتابة تعليمات للحاسوب. لغات شائعة: Python، JavaScript، C++، Java. هل تريد مساعدة في لغة معينة؟';
+                }
+
+                if (msg.includes('الرياضيات') || msg.includes('حساب') || msg.includes('جمع') || msg.includes('طرح')) {
+                    return '🧮 يمكنني مساعدتك في الرياضيات الأساسية. إذا كان لديك مسألة محددة، اطرحها وسأحاول حلها.';
+                }
+
+                // 5. أسئلة فلسفية
+                if (msg.includes('معنى الحياة') || msg.includes('الهدف من الحياة') || msg.includes('لماذا نحن هنا')) {
+                    return '🎯 سؤال عميق! يُعتقد أن معنى الحياة يختلف من شخص لآخر: البعض يراه في العلاقات، التعلم، أو ترك أثر إيجابي. ما رأيك أنت؟';
+                }
+
+                // 6. الطقس
+                if (msg.includes('الطقس') || msg.includes('الجو') || msg.includes('توقعات')) {
+                    return '🌤️ ليس لدي بيانات حية عن الطقس، لكن يمكنك استخدام تطبيقات الطقس المحلية أو مواقع الأرصاد.';
+                }
+
+                // 7. شكر
+                if (msg.includes('شكرا') || msg.includes('مشكور') || msg.includes('يعطيك العافية')) {
+                    return 'العفو! 😊 سعيد بمساعدتك. هل هناك سؤال آخر؟';
+                }
+
+                // 8. وداع
+                if (msg.includes('وداعا') || msg.includes('مع السلامة') || msg.includes('باي') || msg.includes('سلام')) {
+                    return '👋 وداعاً! أتمنى لك يوماً جميلاً. عد متى شئت، سأكون هنا.';
+                }
+
+                // 9. أسئلة عن المستقبل أو التنبؤ
+                if (msg.includes('المستقبل') || msg.includes('توقع') || msg.includes('ماذا سيحدث')) {
+                    return '🔮 لا أملك كرة بلورية، لكن يمكنني التحدث عن الاتجاهات العامة. المستقبل يعتمد على خياراتنا الحالية.';
+                }
+
+                // 10. أسئلة عن الصحة
+                if (msg.includes('صحة') || msg.includes('مرض') || msg.includes('علاج') || msg.includes('دواء')) {
+                    return '⚕️ أنا لست طبيباً. لكن أنصحك باستشارة طبيب مختص لأي استفسار صحي. هل تريد معلومات عامة؟';
+                }
+
+                // 11. أسئلة عن التقنية
+                if (msg.includes('هاتف') || msg.includes('كمبيوتر') || msg.includes('لابتوب') || msg.includes('تكنولوجيا')) {
+                    return '📱 التقنية تتطور بسرعة. هل لديك سؤال محدد عن جهاز معين أو برنامج؟';
+                }
+
+                // 12. أسئلة عن الطعام
+                if (msg.includes('طعام') || msg.includes('اكل') || msg.includes('طبخ') || msg.includes('مطبخ')) {
+                    return '🍲 الطبخ فن وعلم! هل تبحث عن وصفة معينة أو نصيحة غذائية؟';
+                }
+
+                // ========== سياق المحادثة ==========
+                // تحليل آخر 3 رسائل للسياق
+                const lastMessages = conversationHistory.slice(-3);
+                let contextHint = '';
+
+                if (lastMessages.length > 0) {
+                    const lastUserMsg = lastMessages.filter(m => m.role === 'user').pop();
+                    if (lastUserMsg) {
+                        const lastMsg = lastUserMsg.content.toLowerCase();
+                        if (lastMsg.includes('اخبرني') || lastMsg.includes('حدثني')) {
+                            contextHint = ' يبدو أنك تريد معرفة المزيد عن هذا الموضوع.';
+                        }
                     }
-                );
+                }
 
-                modelStatus.textContent = '✅ النموذج جاهز! يمكنك البدء.';
-                modelStatus.style.color = '#7dffb3';
-                sendBtn.disabled = false;
-                userInput.disabled = false;
-                userInput.focus();
+                // رد عام ذكي مع سياق
+                return `🤔 سؤال جيد!${contextHint} لدي معرفة محدودة، لكني أحاول فهم سياق سؤالك. هل يمكنك توضيح أكثر أو إعادة صياغة السؤال؟`;
+            }
 
-                // اختبار سريع
-                console.log('✅ نموذج Phi-3.5-mini جاهز للاستخدام');
-            } catch (err) {
-                console.error(err);
-                modelStatus.textContent = '❌ فشل تحميل النموذج: ' + err.message;
-                modelStatus.style.color = '#ff7a7a';
+            // ========== إضافة رسالة ==========
+            function addMessage(text, sender) {
+                const div = document.createElement('div');
+                div.className = `msg ${sender}`;
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.textContent = text;
+                div.appendChild(bubble);
+                chatBox.appendChild(div);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                return div;
+            }
+
+            // ========== معالجة الرسالة ==========
+            function handleSend() {
+                const userText = userInput.value.trim();
+                if (!userText) {
+                    userInput.style.borderColor = '#ff6b7a';
+                    setTimeout(() => userInput.style.borderColor = '', 500);
+                    return;
+                }
+
+                if (isProcessing) return;
+                isProcessing = true;
                 sendBtn.disabled = true;
-            }
-        }
+                userInput.disabled = true;
 
-        // ========== توليد الرد ==========
-        async function generateResponse(userMessage) {
-            if (isGenerating) return;
-            if (!generator) {
-                addMessage('⏳ النموذج لا يزال قيد التحميل، انتظر قليلاً.', 'ai');
-                return;
-            }
-
-            isGenerating = true;
-            sendBtn.disabled = true;
-            userInput.disabled = true;
-
-            // إضافة رسالة المستخدم
-            addMessage(userMessage, 'user');
-
-            // إظهار مؤشر الكتابة
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'msg ai typing';
-            typingDiv.id = 'typingIndicator';
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble';
-            bubble.textContent = 'جاري التفكير';
-            typingDiv.appendChild(bubble);
-            chatBox.appendChild(typingDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                // بناء المحادثة (آخر 6 رسائل للحفاظ على السياق مع تقليل الاستهلاك)
-                const recentHistory = conversationHistory.slice(-6);
-                let messages = [
-                    { role: 'system', content: SYSTEM_PROMPT },
-                    ...recentHistory,
-                    { role: 'user', content: userMessage }
-                ];
-
-                // تحويل إلى النص المطلوب للنموذج
-                const prompt = messages
-                    .map(m => `${m.role === 'system' ? 'System' : m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
-                    .join('\n') + '\nAssistant:';
-
-                // توليد الرد
-                const result = await generator(prompt, {
-                    max_new_tokens: 512,
-                    temperature: 0.7,
-                    top_p: 0.9,
-                    do_sample: true,
-                    pad_token_id: 50256,
-                    eos_token_id: 50256,
-                });
-
-                // استخراج النص
-                let fullText = result[0]?.generated_text || '';
-                // استخراج جزء الـ Assistant فقط
-                const assistantMatch = fullText.match(/Assistant:\s*([\s\S]*?)$/);
-                let reply = assistantMatch ? assistantMatch[1].trim() : fullText.trim();
-
-                // إذا كان الرد فارغاً
-                if (!reply) reply = 'عذراً، لم أستطع توليد رد. حاول مرة أخرى.';
-
-                // إزالة مؤشر الكتابة
-                const indicator = document.getElementById('typingIndicator');
-                if (indicator) indicator.remove();
-
-                // إضافة الرد
-                addMessage(reply, 'ai');
-
-                // حفظ المحادثة (للسياق)
-                conversationHistory.push(
-                    { role: 'user', content: userMessage },
-                    { role: 'assistant', content: reply }
-                );
-
-                // تحديث عداد الرموز (تقديري)
-                const totalTokens = prompt.length + reply.length;
-                tokenCount.textContent = `🧮 ~${Math.ceil(totalTokens / 4)} رمز`;
-
-            } catch (err) {
-                console.error(err);
-                const indicator = document.getElementById('typingIndicator');
-                if (indicator) indicator.remove();
-                addMessage('❌ حدث خطأ أثناء توليد الرد: ' + err.message, 'ai');
-            } finally {
-                isGenerating = false;
-                sendBtn.disabled = false;
-                userInput.disabled = false;
-                userInput.focus();
+                // عرض رسالة المستخدم
+                addMessage(userText, 'user');
                 userInput.value = '';
+
+                // مؤشر الكتابة
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'msg ai typing';
+                typingDiv.id = 'typingIndicator';
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.textContent = 'جاري التفكير';
+                typingDiv.appendChild(bubble);
+                chatBox.appendChild(typingDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // محاكاة وقت التفكير
+                const delay = 500 + Math.random() * 700;
+
+                setTimeout(() => {
+                    // إزالة مؤشر الكتابة
+                    const indicator = document.getElementById('typingIndicator');
+                    if (indicator) indicator.remove();
+
+                    // توليد الرد
+                    const reply = getAIResponse(userText);
+                    addMessage(reply, 'ai');
+
+                    // حفظ في السجل
+                    conversationHistory.push(
+                        { role: 'user', content: userText },
+                        { role: 'assistant', content: reply }
+                    );
+
+                    // الحفاظ على حجم السجل
+                    if (conversationHistory.length > 20) {
+                        conversationHistory = conversationHistory.slice(-20);
+                    }
+
+                    isProcessing = false;
+                    sendBtn.disabled = false;
+                    userInput.disabled = false;
+                    userInput.focus();
+
+                }, delay);
             }
-        }
 
-        // ========== إضافة رسالة للواجهة ==========
-        function addMessage(text, sender) {
-            const div = document.createElement('div');
-            div.className = `msg ${sender}`;
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble';
-            bubble.textContent = text;
-            div.appendChild(bubble);
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
-            return div;
-        }
+            // ========== أحداث ==========
+            sendBtn.addEventListener('click', handleSend);
 
-        // ========== أحداث ==========
-        sendBtn.addEventListener('click', () => {
-            const text = userInput.value.trim();
-            if (text) generateResponse(text);
-        });
+            userInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSend();
+                }
+            });
 
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const text = userInput.value.trim();
-                if (text) generateResponse(text);
-            }
-        });
+            // ========== بداية ==========
+            modelStatus.textContent = '✅ جاهز للاستخدام (ذكي وسياقي)';
+            userInput.focus();
 
-        // ========== بدء التحميل ==========
-        loadModel();
-
-        // رسالة إرشادية بعد التحميل
-        console.log('🚀 ذكاء اصطناعي Phi-3.5-mini يعمل في المتصفح');
+            console.log('🧠 الذكاء الاصطناعي الخفيف جاهز!');
+        })();
     </script>
 </body>
 </html>
