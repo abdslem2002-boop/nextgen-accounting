@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 دردشة مجانية</title>
+    <title>🤖 محادثة مجانية - Hugging Face</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body {
@@ -76,6 +76,17 @@
             padding: 8px 14px;
             font-size: 13px;
         }
+        .error-message {
+            background: #fde8e8;
+            color: #c0392b;
+            align-self: center;
+            max-width: 92%;
+            text-align: center;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 13px;
+        }
         .typing-indicator {
             background: white;
             align-self: flex-start;
@@ -142,6 +153,13 @@
             font-weight: 500;
         }
         .settings-area button:hover { color: #764ba2; }
+        .settings-area .status {
+            font-size: 11px;
+            color: #888;
+            background: #f0f0f0;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
         #chat-box::-webkit-scrollbar { width: 5px; }
         #chat-box::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         #chat-box::-webkit-scrollbar-thumb { background: #667eea; border-radius: 10px; }
@@ -163,7 +181,7 @@
 
     <div class="settings-area">
         <button id="clear-chat-btn">🗑️ مسح المحادثة</button>
-        <span style="font-size:11px;color:#888;">مدعوم بـ Hugging Face</span>
+        <span class="status" id="status-text">🟢 جاهز</span>
     </div>
 
     <div class="input-area">
@@ -173,14 +191,20 @@
 </div>
 
 <script>
-    // ===== بدون مفتاح API - يستخدم Hugging Face =====
+    // ===== استخدام Hugging Face Inference API (بدون مفتاح) =====
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
     const clearBtn = document.getElementById('clear-chat-btn');
+    const statusText = document.getElementById('status-text');
 
     let chatHistory = [];
     let isWaiting = false;
+
+    function updateStatus(text, isError = false) {
+        statusText.textContent = text;
+        statusText.style.color = isError ? '#c0392b' : '#2e7d32';
+    }
 
     function addMessage(text, sender, type = '') {
         const div = document.createElement('div');
@@ -207,7 +231,96 @@
         if (el) el.remove();
     }
 
-    // === استخدام Hugging Face (مجاني بدون مفتاح) ===
+    // === دالة الاتصال بـ Hugging Face مع إعادة المحاولة التلقائية ===
+    async function callHuggingFace(message, retries = 3) {
+        // استخدام نموذج صغير ومجاني ومتوافق مع الاستخدام بدون مفتاح
+        const MODEL = "Qwen/Qwen2.5-1.5B-Instruct";
+        const API_URL = `https://api-inference.huggingface.co/models/${MODEL}`;
+
+        // بناء رسائل المحادثة (آخر 10 رسائل فقط للسياق)
+        const conversation = chatHistory.slice(-10).map(msg => ({
+            role: msg.role === 'user' ? 'user' : 'assistant',
+            content: msg.content
+        }));
+
+        const payload = {
+            messages: [
+                { role: 'system', content: 'أنت مساعد ذكي ومفيد. أجب باللغة العربية دائماً. كن مختصراً وواضحاً.' },
+                ...conversation,
+                { role: 'user', content: message }
+            ],
+            parameters: {
+                max_new_tokens: 500,
+                temperature: 0.7,
+                top_p: 0.9,
+                do_sample: true,
+                return_full_text: false
+            }
+        };
+
+        let lastError = null;
+
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                updateStatus(`⏳ جاري المحاولة ${attempt}/${retries}...`);
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                // حالة 503 تعني أن النموذج قيد التحميل (يحدث في الخدمة المجانية)
+                if (response.status === 503) {
+                    const errorData = await response.json();
+                    if (errorData.error?.includes('loading')) {
+                        const waitTime = Math.min(10 * attempt, 30);
+                        updateStatus(`⏳ النموذج يتحمّل... انتظر ${waitTime} ثانية`);
+                        await new Promise(r => setTimeout(r, waitTime * 1000));
+                        continue;
+                    }
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // استخراج النص من الرد
+                let reply = '';
+                if (data.choices && data.choices[0]?.message?.content) {
+                    reply = data.choices[0].message.content;
+                } else if (data.generated_text) {
+                    reply = data.generated_text;
+                } else if (data[0]?.generated_text) {
+                    reply = data[0].generated_text;
+                } else {
+                    reply = 'عذراً، لم أتلقَ رداً.';
+                }
+
+                updateStatus('🟢 جاهز');
+                return reply;
+
+            } catch (error) {
+                lastError = error;
+                console.warn(`محاولة ${attempt} فشلت:`, error.message);
+                
+                if (attempt < retries) {
+                    const waitTime = Math.min(5 * attempt, 20);
+                    updateStatus(`⚠️ خطأ: ${error.message.slice(0, 30)}... إعادة المحاولة بعد ${waitTime}ث`);
+                    await new Promise(r => setTimeout(r, waitTime * 1000));
+                }
+            }
+        }
+
+        throw lastError || new Error('فشلت جميع المحاولات');
+    }
+
+    // === دالة إرسال الرسالة الأساسية ===
     async function sendMessage(message) {
         if (isWaiting) return;
         if (!message.trim()) return;
@@ -219,81 +332,24 @@
         isWaiting = true;
 
         showTyping();
+        updateStatus('⏳ جاري التفكير...');
 
         try {
-            // استخدام نموذج مجاني من Hugging Face
-            const response = await fetch(
-                'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        inputs: `<s>[INST] ${message} [/INST]`,
-                        parameters: {
-                            max_new_tokens: 500,
-                            temperature: 0.7,
-                            return_full_text: false
-                        }
-                    })
-                }
-            );
-
+            const reply = await callHuggingFace(message);
+            
             removeTyping();
-
-            if (!response.ok) {
-                // محاولة نموذج بديل
-                const response2 = await fetch(
-                    'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            inputs: message,
-                            parameters: {
-                                max_length: 100,
-                                temperature: 0.7
-                            }
-                        })
-                    }
-                );
-                
-                if (!response2.ok) {
-                    throw new Error('الخدمة مشغولة حالياً');
-                }
-                
-                const data2 = await response2.json();
-                const reply = data2.generated_text || 'عذراً، لم أتلقَ رداً.';
-                addMessage(reply, 'bot');
-                
-                chatHistory.push(
-                    { role: 'user', content: message },
-                    { role: 'assistant', content: reply }
-                );
-                return;
-            }
-
-            const data = await response.json();
-            const reply = data.generated_text || 'عذراً، لم أتلقَ رداً.';
-            
-            // تنظيف الرد من علامات التنسيق
-            const cleanReply = reply.replace(/<s>|<\/s>|\[INST\]|\[\/INST\]/g, '').trim();
-            
-            addMessage(cleanReply, 'bot');
+            addMessage(reply, 'bot');
 
             chatHistory.push(
                 { role: 'user', content: message },
-                { role: 'assistant', content: cleanReply }
+                { role: 'assistant', content: reply }
             );
             if (chatHistory.length > 50) chatHistory = chatHistory.slice(-50);
 
         } catch (error) {
             removeTyping();
-            addMessage('❌ الخدمة مشغولة. حاول مرة أخرى بعد قليل.', 'bot');
-            console.error('خطأ:', error);
+            updateStatus('❌ خطأ', true);
+            addMessage(`❌ ${error.message || 'حدث خطأ غير متوقع. حاول مرة أخرى.'}`, 'bot', 'error-message');
         } finally {
             userInput.disabled = false;
             sendBtn.disabled = false;
@@ -302,6 +358,7 @@
         }
     }
 
+    // === الأحداث ===
     function handleSend() {
         const msg = userInput.value.trim();
         if (msg) sendMessage(msg);
@@ -324,10 +381,12 @@
         }
     });
 
+    // === رسالة الترحيب ===
     window.addEventListener('DOMContentLoaded', () => {
         addMessage('👋 مرحباً! أنا مساعدك الذكي.', 'bot', 'info-message');
-        addMessage('💡 لا حاجة لمفتاح API أو تسجيل دخول!', 'bot', 'info-message');
-        addMessage('⚡ قد يستغرق الرد 5-10 ثوانٍ.', 'bot', 'info-message');
+        addMessage('💡 يعمل بدون مفتاح API أو تسجيل دخول!', 'bot', 'info-message');
+        addMessage('⚡ قد يستغرق الرد 5-15 ثانية في أول مرة.', 'bot', 'info-message');
+        updateStatus('🟢 جاهز');
         userInput.focus();
     });
 </script>
