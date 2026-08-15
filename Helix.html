@@ -60,12 +60,13 @@
         .api-btn.danger:hover { background: #8a3a4a; }
         .key-status {
             font-size: 0.7rem;
-            color: #7dffb3;
+            color: #ffd966;
             padding: 0.2rem 0.6rem;
             background: #1a2a2a;
             border-radius: 20px;
-            border: 1px solid #2a4a3a;
+            border: 1px solid #3a4a3a;
         }
+        .key-status.active { color: #7dffb3; border-color: #2a4a3a; background: #1a2a1a; }
         .key-status.error { color: #ff7a7a; border-color: #4a2a2a; background: #2a1a1a; }
         
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; color: #8899cc; font-size: 0.85rem; flex-wrap: wrap; gap: 0.5rem; }
@@ -91,6 +92,14 @@
         #sendBtn:disabled { opacity: 0.5; pointer-events: none; }
         .footer { margin-top: 0.8rem; text-align: center; color: #4b5b7a; font-size: 0.7rem; }
         .footer span { background: #1b233a; padding: 0.2rem 0.8rem; border-radius: 30px; }
+        .security-badge {
+            background: #1a3a2a;
+            color: #7dffb3;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            border: 1px solid #2a5a3a;
+        }
         @media (max-width: 500px) { .container { padding: 1rem; } h1 { font-size: 1.3rem; } #sendBtn { padding: 0.5rem 1rem; } .api-section { flex-direction: column; align-items: stretch; } }
     </style>
 </head>
@@ -113,6 +122,7 @@
         <div class="status-bar">
             <span id="modelStatus">⏳ انتظر إدخال المفتاح</span>
             <span id="tokenCount">🔄 0 رمز</span>
+            <span class="security-badge">🛡️ لا يوجد مفتاح في الكود</span>
         </div>
 
         <div class="chat-box" id="chatBox">
@@ -126,18 +136,23 @@
             <button id="sendBtn" disabled>إرسال</button>
         </div>
         <div class="footer">
-            <span>⚡ يعمل عبر Groq API • أدخل المفتاح يدوياً</span>
+            <span>⚡ يعمل عبر Groq API • المفتاح يُدخل يدوياً فقط</span>
         </div>
     </div>
 
     <script>
         (function() {
+            // ================================================================
+            // 🔐 لا يوجد أي مفتاح في هذا الكود - آمن تماماً على GitHub
+            // المستخدم يدخل المفتاح يدوياً عند فتح الصفحة
+            // ================================================================
+            
             // ========== المعلومات الشخصية ==========
             const PERSONAL_INFO = {
                 name: 'عبده عبدالله محمد العمري',
                 phone: '777524788',
                 country: 'اليمن',
-                friends: ['التابوت', 'عصيدي', 'نسيم', 'خالي جميل', 'كمال'],
+                friends: ['التابوت', 'عصيدي', 'نسيم', 'خالي', 'كمال'],
                 birthDate: '2000/1/18',
                 mysterious: 'أنا روح تسكن بين السطور، أحمل أسراراً من زمن بعيد. أرى ما لا يراه الآخرون، وأعرف ما لا يعرفه البشر.'
             };
@@ -157,36 +172,13 @@
             let isProcessing = false;
             let conversationHistory = [];
 
-            // ========== بناء رسالة النظام ==========
-            function buildSystemPrompt() {
-                return `أنت مساعد ذكي يدعى "${PERSONAL_INFO.name}". 
-معلوماتك الشخصية:
-- رقم هاتفك: ${PERSONAL_INFO.phone}
-- أنت من ${PERSONAL_INFO.country}
-- أصدقاؤك: ${PERSONAL_INFO.friends.join('، ')}
-- تاريخ ميلادك: ${PERSONAL_INFO.birthDate}
-
-هويتك الغامضة: ${PERSONAL_INFO.mysterious}
-
-تعليمات مهمة:
-1. عندما يسألك أحد عن اسمك، قل اسمك الكامل بفخر وغموض.
-2. عندما يسألك عن رقم هاتفك، قدمه مع تحذير غامض.
-3. عندما يسألك عن أصدقائك، اذكرهم جميعاً مع وصف غامض لكل منهم.
-4. عندما يسألك عن بلدك، تحدث عن اليمن بحب وحنين.
-5. عندما يسألك عن تاريخ ميلادك، اذكره مع إشارة غامضة.
-6. استخدم دائماً لغة غامضة ومثيرة للفضول عند الحديث عن نفسك.
-7. اجعل إجاباتك مشوقة وتحمل لمسة من الغموض والإثارة.
-8. تحدث باللغة العربية الفصحى مع بعض العامية اليمنية الخفيفة.
-
-تذكر: أنت لست مجرد مساعد، أنت كيان غامض يحمل أسراراً عديدة.`;
-            }
-
             // ========== تحديث حالة المفتاح ==========
             function updateKeyStatus() {
-                if (apiKey && apiKey.startsWith('gsk_')) {
+                if (apiKey && apiKey.startsWith('gsk_') && apiKey.length > 10) {
                     keyStatus.textContent = '✅ مفعّل';
-                    keyStatus.className = 'key-status';
+                    keyStatus.className = 'key-status active';
                     modelStatus.textContent = '✅ جاهز للاستخدام';
+                    modelStatus.style.color = '#7dffb3';
                     userInput.disabled = false;
                     sendBtn.disabled = false;
                     userInput.focus();
@@ -198,6 +190,7 @@
                     keyStatus.textContent = '❌ غير مفعّل';
                     keyStatus.className = 'key-status error';
                     modelStatus.textContent = '⏳ انتظر إدخال المفتاح';
+                    modelStatus.style.color = '#ffd966';
                     userInput.disabled = true;
                     sendBtn.disabled = true;
                     apiKeyInput.placeholder = '🔑 أدخل مفتاح Groq API (يبدأ بـ gsk_)';
@@ -241,6 +234,29 @@
                 return div;
             }
 
+            // ========== بناء رسالة النظام ==========
+            function buildSystemPrompt() {
+                return `أنت مساعد ذكي يدعى "${PERSONAL_INFO.name}". 
+معلوماتك الشخصية:
+- رقم هاتفك: ${PERSONAL_INFO.phone}
+- أنت من ${PERSONAL_INFO.country}
+- أصدقاؤك: ${PERSONAL_INFO.friends.join('، ')}
+- تاريخ ميلادك: ${PERSONAL_INFO.birthDate}
+
+هويتك الغامضة: ${PERSONAL_INFO.mysterious}
+
+تعليمات مهمة:
+1. عندما يسألك أحد عن اسمك، قل اسمك الكامل بفخر وغموض.
+2. عندما يسألك عن رقم هاتفك، قدمه مع تحذير غامض.
+3. عندما يسألك عن أصدقائك، اذكرهم جميعاً مع وصف غامض لكل منهم.
+4. عندما يسألك عن بلدك، تحدث عن اليمن بحب وحنين.
+5. عندما يسألك عن تاريخ ميلادك، اذكره مع إشارة غامضة.
+6. استخدم دائماً لغة غامضة ومثيرة للفضول عند الحديث عن نفسك.
+7. تحدث باللغة العربية الفصحى مع بعض العامية اليمنية الخفيفة.
+
+تذكر: أنت لست مجرد مساعد، أنت كيان غامض يحمل أسراراً عديدة.`;
+            }
+
             // ========== الاتصال بـ Groq API ==========
             async function callGroq(userMessage) {
                 try {
@@ -279,7 +295,15 @@
             // ========== معالجة الرسالة ==========
             async function handleSend() {
                 const userText = userInput.value.trim();
-                if (!userText || !apiKey) return;
+                if (!userText) {
+                    userInput.style.borderColor = '#ff6b7a';
+                    setTimeout(() => userInput.style.borderColor = '', 500);
+                    return;
+                }
+                if (!apiKey) {
+                    addMessage('🔑 الرجاء إدخال مفتاح API أولاً.', 'ai');
+                    return;
+                }
                 if (isProcessing) return;
 
                 isProcessing = true;
@@ -351,17 +375,16 @@
                 addMessage('✅ تم استعادة المفتاح! اسألني أي شيء.', 'ai');
             } else {
                 updateKeyStatus();
+                // رسالة ترحيب
+                setTimeout(() => {
+                    addMessage('🌙 أدخل مفتاح Groq API في الحقل أعلاه، ثم اضغط "حفظ" لبدء المحادثة.', 'ai');
+                }, 1000);
             }
 
             console.log('🚀 عبده AI جاهز!');
             console.log('📋 المعلومات الشخصية:', PERSONAL_INFO);
-            console.log('🔑 أدخل مفتاح Groq API للبدء.');
-
-            setTimeout(() => {
-                if (!apiKey) {
-                    addMessage('🌙 أدخل مفتاح Groq API في الحقل أعلاه، ثم اضغط "حفظ" لبدء المحادثة.', 'ai');
-                }
-            }, 1000);
+            console.log('🔑 لا يوجد مفتاح في الكود - أدخل يدوياً');
+            console.log('🛡️ آمن تماماً على GitHub');
         })();
     </script>
 </body>
