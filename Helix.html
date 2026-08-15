@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧠 Groq AI (مجاني)</title>
+    <title>🧠 Groq AI (مجاني وبتنسيق متقدم)</title>
+    <!-- استدعاء مكتبة Marked.js لتنسيق النصوص -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #0b0e1a; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 1rem; }
-        .container { max-width: 750px; width: 100%; background: #141a2b; border-radius: 2rem; padding: 1.8rem; box-shadow: 0 20px 40px rgba(0,0,0,0.7); border: 1px solid #2a3350; }
-        h1 { display: flex; align-items: center; gap: 0.7rem; color: #eef3ff; font-weight: 500; font-size: 1.8rem; border-bottom: 1px solid #2a3350; padding-bottom: 0.8rem; margin-bottom: 1rem; }
+        .container { max-width: 800px; width: 100%; background: #141a2b; border-radius: 2rem; padding: 1.8rem; box-shadow: 0 20px 40px rgba(0,0,0,0.7); border: 1px solid #2a3350; display: flex; flex-direction: column; max-height: 95vh; }
+        h1 { display: flex; align-items: center; justify-content: space-between; color: #eef3ff; font-weight: 500; font-size: 1.8rem; border-bottom: 1px solid #2a3350; padding-bottom: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+        .title-left { display: flex; align-items: center; gap: 0.7rem; }
         h1 small { font-size: 0.8rem; background: #2a3a6a; padding: 0.2rem 0.9rem; border-radius: 40px; color: #aac3ff; font-weight: 400; }
+        .clear-btn { background: #2a2538; border: 1px solid #4a3a6a; color: #ffb3b3; padding: 0.3rem 0.9rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
+        .clear-btn:hover { background: #3a2a4a; }
         .api-key-input { display: flex; gap: 0.5rem; margin-bottom: 1rem; background: #0c1120; padding: 0.3rem; border-radius: 2rem; border: 1px solid #2a3350; }
         #apiKey { flex: 1; background: transparent; border: none; padding: 0.5rem 1rem; color: #e8f0ff; outline: none; font-size: 0.85rem; }
         #apiKey::placeholder { color: #5f6f94; }
@@ -17,35 +22,45 @@
         .save-key:hover { background: #3a4a8a; }
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; color: #8899cc; font-size: 0.85rem; flex-wrap: wrap; gap: 0.5rem; }
         #modelStatus { background: #1f2740; padding: 0.3rem 1rem; border-radius: 40px; color: #7dffb3; }
-        .chat-box { background: #0f1424; border-radius: 1.5rem; padding: 1rem; min-height: 320px; max-height: 420px; overflow-y: auto; border: 1px solid #28304a; margin-bottom: 1rem; scroll-behavior: smooth; }
+        .chat-box { background: #0f1424; border-radius: 1.5rem; padding: 1rem; flex: 1; min-height: 300px; max-height: 450px; overflow-y: auto; border: 1px solid #28304a; margin-bottom: 1rem; scroll-behavior: smooth; }
         .chat-box::-webkit-scrollbar { width: 5px; }
         .chat-box::-webkit-scrollbar-thumb { background: #3a4a70; border-radius: 20px; }
         .msg { display: flex; margin-bottom: 0.9rem; animation: fadeUp 0.25s ease; }
         .msg.user { justify-content: flex-end; }
         .msg.ai { justify-content: flex-start; }
-        .bubble { max-width: 82%; padding: 0.7rem 1.2rem; border-radius: 1.8rem; line-height: 1.6; font-size: 0.95rem; word-break: break-word; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-        .user .bubble { background: #4f7dff; color: #fff; border-bottom-right-radius: 0.4rem; }
+        .bubble { max-width: 85%; padding: 0.8rem 1.2rem; border-radius: 1.8rem; line-height: 1.6; font-size: 0.95rem; word-break: break-word; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .user .bubble { background: #4f7dff; color: #fff; border-bottom-right-radius: 0.4rem; white-space: pre-wrap; }
         .ai .bubble { background: #1f2846; color: #e4edff; border: 1px solid #33416a; border-bottom-left-radius: 0.4rem; }
+        /* تنسيق مخرجات الـ Markdown داخل الردود */
+        .ai .bubble pre { background: #0a0e1a; padding: 0.8rem; border-radius: 8px; overflow-x: auto; margin: 0.5rem 0; border: 1px solid #2a3350; }
+        .ai .bubble code { font-family: monospace; color: #7dffb3; background: rgba(255,255,255,0.05); padding: 0.1rem 0.3rem; border-radius: 4px; }
+        .ai .bubble pre code { background: transparent; padding: 0; color: #e8f0ff; }
+        .ai .bubble p { margin-bottom: 0.5rem; }
+        .ai .bubble p:last-child { margin-bottom: 0; }
+        .ai .bubble ul, .ai .bubble ol { margin-right: 1.2rem; margin-bottom: 0.5rem; }
         .typing .bubble { background: #1f2846; color: #a0b8f0; border: 1px solid #33416a; border-bottom-left-radius: 0.4rem; min-width: 70px; }
         .typing .bubble::after { content: '...'; animation: dots 1.4s steps(4) infinite; }
         @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
-        .input-area { display: flex; gap: 0.6rem; background: #0c1120; padding: 0.3rem; border-radius: 3rem; border: 1px solid #2a3350; }
-        #userInput { flex: 1; background: transparent; border: none; padding: 0.8rem 1.2rem; color: #e8f0ff; font-size: 1rem; outline: none; }
+        .input-area { display: flex; gap: 0.6rem; background: #0c1120; padding: 0.4rem 0.8rem; border-radius: 1.5rem; border: 1px solid #2a3350; align-items: flex-end; }
+        #userInput { flex: 1; background: transparent; border: none; padding: 0.6rem 0.2rem; color: #e8f0ff; font-size: 1rem; outline: none; resize: none; max-height: 120px; line-height: 1.4; }
         #userInput::placeholder { color: #5f6f94; }
-        #sendBtn { background: #4f7dff; border: none; color: #fff; font-weight: 600; padding: 0.7rem 1.8rem; border-radius: 3rem; cursor: pointer; transition: 0.15s; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(79,125,255,0.3); white-space: nowrap; }
+        #sendBtn { background: #4f7dff; border: none; color: #fff; font-weight: 600; padding: 0.6rem 1.5rem; border-radius: 1.2rem; cursor: pointer; transition: 0.15s; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(79,125,255,0.3); white-space: nowrap; height: 42px; }
         #sendBtn:hover { background: #3b69f0; transform: scale(0.97); }
         #sendBtn:disabled { opacity: 0.5; pointer-events: none; }
         .footer { margin-top: 0.8rem; text-align: center; color: #4b5b7a; font-size: 0.7rem; }
         .footer span { background: #1b233a; padding: 0.2rem 0.8rem; border-radius: 30px; }
-        @media (max-width: 500px) { .container { padding: 1rem; } h1 { font-size: 1.3rem; } #sendBtn { padding: 0.5rem 1rem; } }
+        @media (max-width: 500px) { .container { padding: 1rem; } h1 { font-size: 1.3rem; } }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>
-            🧠 ذكاء اصطناعي
-            <small>Groq (مجاني)</small>
+            <div class="title-left">
+                🧠 ذكاء اصطناعي
+                <small>Groq (مجاني)</small>
+            </div>
+            <button class="clear-btn" id="clearChat">🗑️ مسح المحادثة</button>
         </h1>
 
         <div class="api-key-input">
@@ -65,7 +80,7 @@
         </div>
 
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." autofocus disabled />
+            <textarea id="userInput" rows="1" placeholder="اكتب سؤالك هنا... (Shift + Enter لسطر جديد)" disabled></textarea>
             <button id="sendBtn" disabled>إرسال</button>
         </div>
         <div class="footer">
@@ -82,6 +97,7 @@
             const tokenCount = document.getElementById('tokenCount');
             const apiKeyInput = document.getElementById('apiKey');
             const saveKeyBtn = document.getElementById('saveKey');
+            const clearChatBtn = document.getElementById('clearChat');
 
             let apiKey = localStorage.getItem('groq_api_key') || '';
             let isProcessing = false;
@@ -100,11 +116,19 @@
                     localStorage.setItem('groq_api_key', key);
                     enableChat();
                     modelStatus.textContent = '✅ تم حفظ المفتاح!';
-                    addMessage('✅ تم تفعيل Groq (Llama 3.3 70B)! اسألني أي شيء.', 'ai');
+                    addMessage('✅ تم تفعيل Groq (Llama 3.3 70B)! اسألني أي شيء.', 'ai', true);
                 } else {
                     modelStatus.textContent = '❌ مفتاح غير صالح! يجب أن يبدأ بـ gsk_';
                     modelStatus.style.color = '#ff7a7a';
                 }
+            });
+
+            // مسح المحادثة وتفريغ الذاكرة
+            clearChatBtn.addEventListener('click', () => {
+                conversationHistory = [];
+                chatBox.innerHTML = '';
+                addMessage('🗑️ تم مسح المحادثة وبدء صفحة جديدة.', 'ai', true);
+                tokenCount.textContent = '🔄 0 رمز';
             });
 
             function enableChat() {
@@ -114,17 +138,32 @@
                 modelStatus.style.color = '#7dffb3';
             }
 
-            function addMessage(text, sender) {
+            function addMessage(text, sender, isHtml = false) {
                 const div = document.createElement('div');
                 div.className = `msg ${sender}`;
                 const bubble = document.createElement('div');
                 bubble.className = 'bubble';
-                bubble.textContent = text;
+                
+                if (sender === 'ai' && !isHtml) {
+                    // معالجة النصوص عبر Marked لعرض التنسيقات (جداول، أكواد، غامق...)
+                    bubble.innerHTML = marked.parse(text);
+                } else if (isHtml) {
+                    bubble.innerHTML = text;
+                } else {
+                    bubble.textContent = text;
+                }
+
                 div.appendChild(bubble);
                 chatBox.appendChild(div);
                 chatBox.scrollTop = chatBox.scrollHeight;
                 return div;
             }
+
+            // جعل حقل النص يتمدد تلقائياً حسب المحتوى
+            userInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight - 6) + 'px';
+            });
 
             async function callGroq(userMessage) {
                 try {
@@ -135,14 +174,13 @@
                             'Authorization': `Bearer ${apiKey}`
                         },
                         body: JSON.stringify({
-                            // ✅ النموذج المحدث (يدعم العربية)
                             model: 'llama-3.3-70b-versatile',
                             messages: [
                                 { role: 'system', content: 'أنت مساعد ذكي، مفيد، ودود، تتحدث باللغة العربية الفصحى بطلاقة.' },
                                 ...conversationHistory,
                                 { role: 'user', content: userMessage }
                             ],
-                            max_tokens: 1000,
+                            max_tokens: 1500,
                             temperature: 0.7
                         })
                     });
@@ -172,6 +210,7 @@
 
                 addMessage(userText, 'user');
                 userInput.value = '';
+                userInput.style.height = 'auto';
 
                 const typingDiv = document.createElement('div');
                 typingDiv.className = 'msg ai typing';
@@ -187,6 +226,7 @@
                     const reply = await callGroq(userText);
                     const indicator = document.getElementById('typingIndicator');
                     if (indicator) indicator.remove();
+                    
                     addMessage(reply, 'ai');
 
                     conversationHistory.push(
@@ -199,7 +239,7 @@
                 } catch (error) {
                     const indicator = document.getElementById('typingIndicator');
                     if (indicator) indicator.remove();
-                    addMessage(`❌ خطأ: ${error.message}`, 'ai');
+                    addMessage(`❌ خطأ: ${error.message}`, 'ai', true);
                     modelStatus.textContent = '❌ خطأ في الاتصال';
                     modelStatus.style.color = '#ff7a7a';
                 } finally {
@@ -211,19 +251,16 @@
             }
 
             sendBtn.addEventListener('click', handleSend);
+            
+            // إرسال عبر Enter مع دعم Shift + Enter لسطر جديد
             userInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     handleSend();
                 }
             });
 
-            if (apiKey) {
-                enableChat();
-                modelStatus.textContent = '✅ Groq جاهز!';
-            }
-
-            console.log('🚀 Groq AI جاهز (Llama 3.3 70B)!');
+            console.log('🚀 Groq AI محدث وجاهز!');
         })();
     </script>
 </body>
