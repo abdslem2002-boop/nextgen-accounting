@@ -10,11 +10,63 @@
         .container { max-width: 750px; width: 100%; background: #141a2b; border-radius: 2rem; padding: 1.8rem; box-shadow: 0 20px 40px rgba(0,0,0,0.7); border: 1px solid #2a3350; }
         h1 { display: flex; align-items: center; gap: 0.7rem; color: #eef3ff; font-weight: 500; font-size: 1.8rem; border-bottom: 1px solid #2a3350; padding-bottom: 0.8rem; margin-bottom: 1rem; }
         h1 small { font-size: 0.8rem; background: #2a3a6a; padding: 0.2rem 0.9rem; border-radius: 40px; color: #aac3ff; font-weight: 400; }
-        .api-key-input { display: flex; gap: 0.5rem; margin-bottom: 1rem; background: #0c1120; padding: 0.3rem; border-radius: 2rem; border: 1px solid #2a3350; }
-        #apiKey { flex: 1; background: transparent; border: none; padding: 0.5rem 1rem; color: #e8f0ff; outline: none; font-size: 0.85rem; }
-        #apiKey::placeholder { color: #5f6f94; }
-        .save-key { background: #2a3a6a; border: none; color: #fff; padding: 0.3rem 1.2rem; border-radius: 2rem; cursor: pointer; font-size: 0.8rem; }
+        
+        /* حقل المفتاح - معدل */
+        .api-key-input { 
+            display: flex; 
+            gap: 0.5rem; 
+            margin-bottom: 1rem; 
+            background: #0c1120; 
+            padding: 0.3rem; 
+            border-radius: 2rem; 
+            border: 1px solid #2a3350;
+            align-items: center;
+        }
+        #apiKey { 
+            flex: 1; 
+            background: transparent; 
+            border: none; 
+            padding: 0.5rem 1rem; 
+            color: #e8f0ff; 
+            outline: none; 
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+        #apiKey::placeholder { 
+            color: #5f6f94;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            letter-spacing: 0;
+        }
+        .api-key-actions {
+            display: flex;
+            gap: 0.3rem;
+        }
+        .save-key { 
+            background: #2a3a6a; 
+            border: none; 
+            color: #fff; 
+            padding: 0.3rem 1.2rem; 
+            border-radius: 2rem; 
+            cursor: pointer; 
+            font-size: 0.8rem; 
+            transition: 0.15s;
+            white-space: nowrap;
+        }
         .save-key:hover { background: #3a4a8a; }
+        .clear-key { 
+            background: #4a2a3a; 
+            border: none; 
+            color: #ff8a8a; 
+            padding: 0.3rem 0.8rem; 
+            border-radius: 2rem; 
+            cursor: pointer; 
+            font-size: 0.7rem; 
+            transition: 0.15s;
+            white-space: nowrap;
+        }
+        .clear-key:hover { background: #5a3a4a; }
+        
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; color: #8899cc; font-size: 0.85rem; flex-wrap: wrap; gap: 0.5rem; }
         #modelStatus { background: #1f2740; padding: 0.3rem 1rem; border-radius: 40px; color: #7dffb3; }
         .chat-box { background: #0f1424; border-radius: 1.5rem; padding: 1rem; min-height: 320px; max-height: 420px; overflow-y: auto; border: 1px solid #28304a; margin-bottom: 1rem; scroll-behavior: smooth; }
@@ -31,14 +83,28 @@
         @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
         .input-area { display: flex; gap: 0.6rem; background: #0c1120; padding: 0.3rem; border-radius: 3rem; border: 1px solid #2a3350; }
-        #userInput { flex: 1; background: transparent; border: none; padding: 0.8rem 1.2rem; color: #e8f0ff; font-size: 1rem; outline: none; }
+        #userInput { 
+            flex: 1; 
+            background: transparent; 
+            border: none; 
+            padding: 0.8rem 1.2rem; 
+            color: #e8f0ff; 
+            font-size: 1rem; 
+            outline: none;
+            autocomplete: off;
+        }
         #userInput::placeholder { color: #5f6f94; }
         #sendBtn { background: #4f7dff; border: none; color: #fff; font-weight: 600; padding: 0.7rem 1.8rem; border-radius: 3rem; cursor: pointer; transition: 0.15s; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(79,125,255,0.3); white-space: nowrap; }
         #sendBtn:hover { background: #3b69f0; transform: scale(0.97); }
         #sendBtn:disabled { opacity: 0.5; pointer-events: none; }
         .footer { margin-top: 0.8rem; text-align: center; color: #4b5b7a; font-size: 0.7rem; }
         .footer span { background: #1b233a; padding: 0.2rem 0.8rem; border-radius: 30px; }
-        @media (max-width: 500px) { .container { padding: 1rem; } h1 { font-size: 1.3rem; } #sendBtn { padding: 0.5rem 1rem; } }
+        .key-status {
+            font-size: 0.7rem;
+            color: #6d7ba3;
+            margin-right: 0.5rem;
+        }
+        @media (max-width: 500px) { .container { padding: 1rem; } h1 { font-size: 1.3rem; } #sendBtn { padding: 0.5rem 1rem; } .api-key-input { flex-wrap: wrap; } .api-key-actions { width: 100%; justify-content: flex-end; } }
     </style>
 </head>
 <body>
@@ -48,9 +114,19 @@
             <small>Groq (مجاني)</small>
         </h1>
 
+        <!-- حقل المفتاح - بدون autocomplete -->
         <div class="api-key-input">
-            <input type="password" id="apiKey" placeholder="🔑 أدخل مفتاح Groq API (يبدأ بـ gsk_)" />
-            <button class="save-key" id="saveKey">حفظ</button>
+            <input 
+                type="text" 
+                id="apiKey" 
+                placeholder="🔑 أدخل مفتاح Groq API (يبدأ بـ gsk_)" 
+                autocomplete="off"
+                spellcheck="false"
+            />
+            <div class="api-key-actions">
+                <button class="save-key" id="saveKey">💾 حفظ</button>
+                <button class="clear-key" id="clearKey">🗑️ مسح</button>
+            </div>
         </div>
 
         <div class="status-bar">
@@ -65,7 +141,13 @@
         </div>
 
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." autofocus disabled />
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="اكتب سؤالك هنا..." 
+                autocomplete="off"
+                disabled 
+            />
             <button id="sendBtn" disabled>إرسال</button>
         </div>
         <div class="footer">
@@ -82,29 +164,61 @@
             const tokenCount = document.getElementById('tokenCount');
             const apiKeyInput = document.getElementById('apiKey');
             const saveKeyBtn = document.getElementById('saveKey');
+            const clearKeyBtn = document.getElementById('clearKey');
 
-            let apiKey = localStorage.getItem('groq_api_key') || '';
+            // استخدام sessionStorage بدلاً من localStorage (يُمسح عند إغلاق المتصفح)
+            let apiKey = sessionStorage.getItem('groq_api_key') || '';
             let isProcessing = false;
             let conversationHistory = [];
 
+            // استعادة المفتاح إذا كان موجوداً
             if (apiKey) {
                 apiKeyInput.value = apiKey;
+                // إخفاء جزء من المفتاح للخصوصية
+                const displayKey = apiKey.length > 15 ? apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4) : apiKey;
+                apiKeyInput.placeholder = `🔑 المفتاح: ${displayKey}`;
                 enableChat();
                 modelStatus.textContent = '✅ Groq جاهز!';
             }
 
+            // حفظ المفتاح
             saveKeyBtn.addEventListener('click', () => {
                 const key = apiKeyInput.value.trim();
                 if (key.startsWith('gsk_') && key.length > 10) {
                     apiKey = key;
-                    localStorage.setItem('groq_api_key', key);
+                    sessionStorage.setItem('groq_api_key', key);
+                    // إخفاء جزء من المفتاح
+                    const displayKey = key.length > 15 ? key.substring(0, 8) + '...' + key.substring(key.length - 4) : key;
+                    apiKeyInput.placeholder = `🔑 المفتاح: ${displayKey}`;
+                    apiKeyInput.value = '';
                     enableChat();
                     modelStatus.textContent = '✅ تم حفظ المفتاح!';
                     addMessage('✅ تم تفعيل Groq (Llama 3.3 70B)! اسألني أي شيء.', 'ai');
                 } else {
                     modelStatus.textContent = '❌ مفتاح غير صالح! يجب أن يبدأ بـ gsk_';
                     modelStatus.style.color = '#ff7a7a';
+                    setTimeout(() => {
+                        modelStatus.style.color = '#7dffb3';
+                        modelStatus.textContent = '⏳ انتظر إدخال المفتاح';
+                    }, 3000);
                 }
+            });
+
+            // مسح المفتاح
+            clearKeyBtn.addEventListener('click', () => {
+                sessionStorage.removeItem('groq_api_key');
+                apiKey = '';
+                apiKeyInput.value = '';
+                apiKeyInput.placeholder = '🔑 أدخل مفتاح Groq API (يبدأ بـ gsk_)';
+                userInput.disabled = true;
+                sendBtn.disabled = true;
+                modelStatus.textContent = '⏳ تم مسح المفتاح';
+                modelStatus.style.color = '#ffd966';
+                addMessage('🗑️ تم مسح مفتاح API. أدخل مفتاحاً جديداً للاستمرار.', 'ai');
+                setTimeout(() => {
+                    modelStatus.style.color = '#7dffb3';
+                    modelStatus.textContent = '⏳ انتظر إدخال المفتاح';
+                }, 2000);
             });
 
             function enableChat() {
@@ -135,7 +249,6 @@
                             'Authorization': `Bearer ${apiKey}`
                         },
                         body: JSON.stringify({
-                            // ✅ النموذج المحدث (يدعم العربية)
                             model: 'llama-3.3-70b-versatile',
                             messages: [
                                 { role: 'system', content: 'أنت مساعد ذكي، مفيد، ودود، تتحدث باللغة العربية الفصحى بطلاقة.' },
@@ -216,6 +329,11 @@
                     e.preventDefault();
                     handleSend();
                 }
+            });
+
+            // منع أي ملء تلقائي إضافي
+            document.querySelectorAll('input').forEach(input => {
+                input.setAttribute('autocomplete', 'off');
             });
 
             if (apiKey) {
