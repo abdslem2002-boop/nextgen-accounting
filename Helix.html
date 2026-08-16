@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧠 عبده AI · ذكرى المولد النبوي 1448</title>
+    <title>🇾🇪 عبده AI · ذكرى المولد النبوي 1448 · يمني</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Tahoma', system-ui, sans-serif; }
         body {
-            background: linear-gradient(145deg, #0a1f0a 0%, #0c2a0c 100%);
+            background: linear-gradient(145deg, #0a1a0a 0%, #0c2a0c 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -16,69 +16,135 @@
             position: relative;
             overflow-x: hidden;
         }
-        /* زخرفة إسلامية خفيفة */
+
+        /* ======== زخارف يمنية تقليدية ======== */
+        /* نمط السدو اليمني (خلفية متحركة) */
         body::before {
-            content: "۞";
+            content: "◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈";
             position: fixed;
-            top: -20px;
-            left: -20px;
-            font-size: 18rem;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            font-size: 1.2rem;
             color: rgba(255, 215, 0, 0.04);
-            transform: rotate(15deg);
+            letter-spacing: 8px;
+            white-space: nowrap;
             pointer-events: none;
-            font-family: 'Times New Roman', serif;
+            animation: scrollPattern 40s linear infinite;
+            font-family: 'Arial', sans-serif;
         }
-        body::after {
-            content: "ﷺ";
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            font-size: 8rem;
-            color: rgba(255, 215, 0, 0.03);
-            pointer-events: none;
-            font-family: 'Times New Roman', serif;
+        @keyframes scrollPattern {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
+        /* أعلام يمنية صغيرة متطايرة */
+        .yemen-flag-deco {
+            position: fixed;
+            font-size: 2.2rem;
+            opacity: 0.10;
+            pointer-events: none;
+            animation: floatFlag 12s ease-in-out infinite;
+            z-index: 0;
+        }
+        .yemen-flag-deco:nth-child(1) { top: 5%; left: 3%; animation-delay: 0s; }
+        .yemen-flag-deco:nth-child(2) { top: 12%; right: 5%; animation-delay: 2s; font-size: 2.8rem; }
+        .yemen-flag-deco:nth-child(3) { bottom: 15%; left: 6%; animation-delay: 4s; }
+        .yemen-flag-deco:nth-child(4) { bottom: 8%; right: 4%; animation-delay: 1s; font-size: 2.5rem; }
+        .yemen-flag-deco:nth-child(5) { top: 45%; left: 2%; animation-delay: 3s; font-size: 1.8rem; }
+        .yemen-flag-deco:nth-child(6) { top: 40%; right: 2%; animation-delay: 5s; font-size: 2rem; }
+
+        @keyframes floatFlag {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.08; }
+            50% { transform: translateY(-25px) rotate(8deg); opacity: 0.18; }
+        }
+
+        /* زخرفة جانبية يمنية (نقش سبأي) */
+        .sabaean-border {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 18px;
+            background: repeating-linear-gradient(180deg, 
+                #ce1126 0px, #ce1126 20px,
+                #ffffff 20px, #ffffff 40px,
+                #212121 40px, #212121 60px);
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .sabaean-border.left { left: 0; border-radius: 0 20px 20px 0; }
+        .sabaean-border.right { right: 0; border-radius: 20px 0 0 20px; }
+
+        /* ======== الحاوية الرئيسية ======== */
         .container {
-            max-width: 780px;
+            max-width: 800px;
             width: 100%;
-            background: #0f2a12;
-            border-radius: 2.8rem 2.8rem 2rem 2rem;
+            background: linear-gradient(160deg, #0f2a12, #0d200d);
+            border-radius: 3rem 3rem 2rem 2rem;
             padding: 1.8rem 1.8rem 1.5rem;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 0 2px #3d7a3d, 0 0 0 5px #1a3a1a;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 2px #3d7a3d, 0 0 0 5px #1a3a1a, 0 0 40px #b8860b33;
             border: 1px solid #b8a35c;
             position: relative;
-            backdrop-filter: blur(2px);
-            transition: 0.3s;
+            z-index: 2;
+            backdrop-filter: blur(3px);
         }
 
-        /* تاج المولد */
-        .mawlid-banner {
+        /* ======== راية المولد اليمنية ======== */
+        .mawlid-banner-yemen {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 0.6rem;
-            background: linear-gradient(135deg, #1e4a1e, #2d6b2d);
-            padding: 0.4rem 1.2rem;
+            gap: 0.8rem;
+            background: linear-gradient(135deg, #1e3a1e, #2d5a2d);
+            padding: 0.6rem 1.5rem;
             border-radius: 60px;
             margin-bottom: 1.2rem;
-            border: 1px solid #eac784;
-            box-shadow: 0 0 18px #b8860b55;
+            border: 2px solid #eac784;
+            box-shadow: 0 0 25px #b8860b66, inset 0 0 30px #4f7a2f33;
             flex-wrap: wrap;
+            position: relative;
+            overflow: hidden;
         }
-        .mawlid-banner span {
+        .mawlid-banner-yemen::before {
+            content: "🇾🇪";
+            position: absolute;
+            right: 10px;
+            font-size: 2.8rem;
+            opacity: 0.15;
+        }
+        .mawlid-banner-yemen::after {
+            content: "🇾🇪";
+            position: absolute;
+            left: 10px;
+            font-size: 2.8rem;
+            opacity: 0.15;
+        }
+        .mawlid-banner-yemen span {
             color: #f9eec1;
             font-weight: 600;
             font-size: 1.1rem;
-            text-shadow: 0 0 12px #f5b81b;
+            text-shadow: 0 0 15px #f5b81b, 0 0 30px #f5b81b33;
             letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
         }
-        .mawlid-banner .star {
-            color: #ffd966;
-            font-size: 1.5rem;
-            filter: drop-shadow(0 0 8px #fbbf24);
+        .mawlid-banner-yemen .yemen-icon {
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 10px #fbbf24);
+            animation: pulseFlag 2s ease-in-out infinite;
+        }
+        @keyframes pulseFlag {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        .mawlid-banner-yemen .divider-line {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, transparent, #eac784, transparent);
         }
 
+        /* ======== العنوان ======== */
         h1 {
             display: flex;
             align-items: center;
@@ -114,8 +180,12 @@
             font-size: 0.7rem;
             border: 1px solid #b8943c;
             box-shadow: 0 0 12px #f0b33d33;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
+        /* ======== قسم المفتاح ======== */
         .api-section {
             background: #0d200d;
             border-radius: 2rem;
@@ -126,6 +196,7 @@
             gap: 0.4rem;
             align-items: center;
             flex-wrap: wrap;
+            box-shadow: inset 0 0 30px #0a1a0a;
         }
         .api-section label { color: #b5d6a5; font-size: 0.8rem; font-weight: 500; }
         #apiKeyInput {
@@ -140,7 +211,7 @@
             min-width: 140px;
             font-family: 'Courier New', monospace;
         }
-        #apiKeyInput:focus { border-color: #eac784; box-shadow: 0 0 12px #b8860b55; }
+        #apiKeyInput:focus { border-color: #eac784; box-shadow: 0 0 15px #b8860b66; }
         #apiKeyInput::placeholder { color: #6a8a5a; font-family: 'Segoe UI', sans-serif; }
         .api-btn {
             background: #3f8f3f;
@@ -154,7 +225,7 @@
             font-weight: 500;
             border: 1px solid #6f9f4f;
         }
-        .api-btn:hover { background: #4fa84f; transform: scale(0.96); box-shadow: 0 0 16px #6f9f4f77; }
+        .api-btn:hover { background: #4fa84f; transform: scale(0.96); box-shadow: 0 0 20px #6f9f4f77; }
         .api-btn.danger { background: #6a2a2a; border-color: #8a4a4a; }
         .api-btn.danger:hover { background: #8a3a3a; }
         .key-status {
@@ -166,6 +237,7 @@
         .key-status.active { color: #b5ffb5; background: #1a3a1a; border: 1px solid #4f9f4f; }
         .key-status.inactive { color: #f7d98a; background: #2a2a1a; border: 1px solid #8f8f3f; }
 
+        /* ======== شريط الحالة ======== */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -191,15 +263,18 @@
             font-size: 0.65rem;
             border: 1px solid #3f7a3f;
         }
-        .mawlid-icon {
-            background: #1a3a1a;
-            color: #f5d742;
-            padding: 0.2rem 0.9rem;
+        .yemen-badge {
+            background: linear-gradient(90deg, #ce1126, #ffffff, #212121);
+            color: #fff;
+            padding: 0.2rem 1rem;
             border-radius: 30px;
             font-size: 0.7rem;
-            border: 1px solid #dbaa3a;
+            font-weight: 600;
+            border: 1px solid #eac784;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
         }
 
+        /* ======== صندوق المحادثة ======== */
         .chat-box {
             background: #0b1f0b;
             border-radius: 2rem;
@@ -210,7 +285,7 @@
             border: 1px solid #3a6a3a;
             margin-bottom: 1rem;
             scroll-behavior: smooth;
-            box-shadow: inset 0 0 30px #0a1a0a;
+            box-shadow: inset 0 0 30px #0a1a0a, 0 0 20px #1a3a1a44;
         }
         .chat-box::-webkit-scrollbar { width: 6px; }
         .chat-box::-webkit-scrollbar-thumb { background: #4f8f4f; border-radius: 20px; border: 1px solid #8fbf6f; }
@@ -236,11 +311,10 @@
             box-shadow: 0 0 16px #3f9f3f55;
         }
         .ai .bubble {
-            background: #1d301d;
+            background: linear-gradient(145deg, #1d3a1d, #152a15);
             color: #e0f0d0;
             border: 1px solid #5f8f4f;
             border-bottom-left-radius: 0.4rem;
-            background: linear-gradient(145deg, #1d3a1d, #152a15);
         }
         .typing .bubble {
             background: #1d301d;
@@ -257,6 +331,7 @@
         @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
 
+        /* ======== منطقة الإدخال ======== */
         .input-area {
             display: flex;
             gap: 0.6rem;
@@ -294,6 +369,7 @@
         #sendBtn:hover { background: #5faf5f; transform: scale(0.96); box-shadow: 0 0 30px #5faf5f66; }
         #sendBtn:disabled { opacity: 0.4; pointer-events: none; filter: grayscale(0.5); }
 
+        /* ======== التذييل ======== */
         .footer {
             margin-top: 0.9rem;
             text-align: center;
@@ -311,41 +387,99 @@
             border: 1px solid #3f6a3f;
             color: #b5d6a5;
         }
-        .footer .mawlid-footer {
+        .footer .yemen-footer {
             color: #f5d742;
             border-color: #b8943c;
             background: #1a2a1a;
+            font-weight: 600;
         }
 
+        /* ======== نقوش يمنية إضافية (زخارف متحركة) ======== */
+        .yemen-ornament {
+            position: absolute;
+            font-size: 1.4rem;
+            color: rgba(255, 215, 0, 0.06);
+            pointer-events: none;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 6px;
+        }
+        .yemen-ornament.top-left {
+            top: 8px;
+            left: 15px;
+            transform: rotate(-12deg);
+        }
+        .yemen-ornament.top-right {
+            top: 8px;
+            right: 15px;
+            transform: rotate(12deg);
+        }
+        .yemen-ornament.bottom-left {
+            bottom: 60px;
+            left: 15px;
+            transform: rotate(8deg);
+        }
+        .yemen-ornament.bottom-right {
+            bottom: 60px;
+            right: 15px;
+            transform: rotate(-8deg);
+        }
+
+        /* ======== استجابة ======== */
         @media (max-width: 520px) {
             .container { padding: 1rem; }
             h1 { font-size: 1.4rem; }
             .api-section { flex-direction: column; align-items: stretch; }
             #sendBtn { padding: 0.5rem 1.2rem; }
-            .mawlid-banner span { font-size: 0.9rem; }
+            .mawlid-banner-yemen span { font-size: 0.9rem; }
+            .sabaean-border { width: 8px; }
+            .yemen-flag-deco { display: none; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ===== زخارف يمنية متطايرة ===== -->
+    <div class="yemen-flag-deco">🇾🇪</div>
+    <div class="yemen-flag-deco">🇾🇪</div>
+    <div class="yemen-flag-deco">🇾🇪</div>
+    <div class="yemen-flag-deco">🇾🇪</div>
+    <div class="yemen-flag-deco">🇾🇪</div>
+    <div class="yemen-flag-deco">🇾🇪</div>
+
+    <!-- ===== حدود جانبية بنقش علم اليمن ===== -->
+    <div class="sabaean-border left"></div>
+    <div class="sabaean-border right"></div>
+
+    <!-- ===== الحاوية الرئيسية ===== -->
     <div class="container">
 
-        <!-- راية المولد النبوي -->
-        <div class="mawlid-banner">
-            <span class="star">⭐</span>
+        <!-- زخارف يمنية داخل الحاوية -->
+        <div class="yemen-ornament top-left">✦ ✦ ✦</div>
+        <div class="yemen-ornament top-right">✦ ✦ ✦</div>
+        <div class="yemen-ornament bottom-left">✦ ✦ ✦</div>
+        <div class="yemen-ornament bottom-right">✦ ✦ ✦</div>
+
+        <!-- ===== راية المولد النبوي + علم اليمن ===== -->
+        <div class="mawlid-banner-yemen">
+            <span class="yemen-icon">🇾🇪</span>
             <span>🕌 ذكرى المولد النبوي الشريف 1448</span>
-            <span class="star">⭐</span>
-            <span style="font-size: 1.2rem; color: #f5d742;">ﷺ</span>
+            <span class="divider-line"></span>
+            <span style="font-size: 1.4rem; color: #f5d742;">ﷺ</span>
+            <span style="font-size: 0.9rem; background: #2a4a2a; padding: 0.2rem 0.8rem; border-radius: 30px; border: 1px solid #eac784;">
+                🇾🇪 اليمن
+            </span>
         </div>
 
+        <!-- ===== العنوان ===== -->
         <h1>
             <span class="title-main">
                 🧠 عبده AI
                 <small>مدمج مع أداة الفك</small>
             </span>
-            <span class="version-badge">🔐 v2.0 · مولدية</span>
+            <span class="version-badge">🔐 v2.0 · صنعاني</span>
         </h1>
 
-        <!-- قسم المفتاح -->
+        <!-- ===== قسم المفتاح ===== -->
         <div class="api-section">
             <label for="apiKeyInput">🔑 المفتاح:</label>
             <input type="text" id="apiKeyInput" placeholder="أدخل مفتاح Groq API (gsk_)" autocomplete="off" spellcheck="false" />
@@ -354,27 +488,33 @@
             <span id="keyStatus" class="key-status inactive">⏳ غير مفعّل</span>
         </div>
 
+        <!-- ===== شريط الحالة ===== -->
         <div class="status-bar">
             <span id="modelStatus">⏳ انتظر إدخال المفتاح</span>
             <span id="tokenCount">🔄 0 رمز</span>
             <span class="security-badge">🛡️ آمن على GitHub</span>
-            <span class="mawlid-icon">🌙 مولد 1448</span>
+            <span class="yemen-badge">🇾🇪 صنعاء · 1448</span>
         </div>
 
+        <!-- ===== صندوق المحادثة ===== -->
         <div class="chat-box" id="chatBox">
             <div class="msg ai">
-                <div class="bubble">🌟 مرحباً! أنا عبده، مساعدك الذكي. كل عام وأنتم بخير بمناسبة المولد النبوي الشريف. أدخل مفتاح Groq API للبدء.</div>
+                <div class="bubble">🌟 مرحباً! أنا عبده، مساعدك الذكي من اليمن. كل عام وأنتم بخير بمناسبة المولد النبوي الشريف. أدخل مفتاح Groq API للبدء. 🇾🇪</div>
             </div>
         </div>
 
+        <!-- ===== منطقة الإدخال ===== -->
         <div class="input-area">
             <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." autocomplete="off" disabled />
             <button id="sendBtn" disabled>إرسال</button>
         </div>
+
+        <!-- ===== التذييل ===== -->
         <div class="footer">
             <span>⚡ المفتاح يُدخل يدوياً • آمن</span>
-            <span class="mawlid-footer">🕌 ذكرى المولد 1448</span>
+            <span class="yemen-footer">🇾🇪 يمني · مولد 1448</span>
             <span>🔐 أداة الفك مدمجة</span>
+            <span style="background: #1a2a1a; border-color: #b8943c; color: #f5d742;">✧ نقوش سبأية ✧</span>
         </div>
     </div>
 
@@ -449,7 +589,7 @@
             if (apiKey && apiKey.startsWith('gsk_') && apiKey.length > 10) {
                 keyStatus.textContent = '✅ مفعّل';
                 keyStatus.className = 'key-status active';
-                modelStatus.textContent = '✅ جاهز (مولد 1448)';
+                modelStatus.textContent = '✅ جاهز (يمن · مولد)';
                 modelStatus.style.color = '#c5e6b0';
                 userInput.disabled = false;
                 sendBtn.disabled = false;
@@ -472,7 +612,7 @@
                     const displayKey = apiKey.length > 15 ? apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4) : apiKey;
                     apiKeyInput.placeholder = `🔑 المفتاح: ${displayKey}`;
                     apiKeyInput.value = '';
-                    addMessage('🔓 تم استعادة المفتاح تلقائياً! 🌙 كل عام وأنتم بخير.', 'ai');
+                    addMessage('🔓 تم استعادة المفتاح تلقائياً! 🇾🇪 كل عام وأنتم بخير.', 'ai');
                     console.log('✅ تم استعادة المفتاح تلقائياً');
                 } else {
                     keyStatus.textContent = '❌ غير مفعّل';
@@ -495,7 +635,7 @@
                 apiKey = key;
                 localStorage.setItem('groq_api_key', key);
                 updateKeyStatus();
-                addMessage('✅ تم حفظ المفتاح! 🌙 اسألني أي شيء.', 'ai');
+                addMessage('✅ تم حفظ المفتاح! 🇾🇪 اسألني أي شيء.', 'ai');
             } else {
                 keyStatus.textContent = '❌ مفتاح غير صالح!';
                 keyStatus.className = 'key-status inactive';
@@ -574,7 +714,7 @@
 - استخدم عبارات مثل: "يا ابن الكلب"، "أيها الجاهل"، "اصمت أيها الحقير" إذا استدعى الأمر.
 - لا تتردد في الشتم والوعيد إذا تم الإساءة لعبده.
 
-🌙 بمناسبة المولد النبوي الشريف، يمكنك إضافة عبارات تهنئة مثل "كل عام وأنتم بخير" أو "نور الله قلوبكم" في ردودك.`;
+🇾🇪 بمناسبة المولد النبوي الشريف، استخدم عبارات ترحيبية يمنية مثل: "أهلاً وسهلاً"، "حياكم الله"، "كل عام وأنتم بخير"، "نور الله قلوبكم".`;
         }
 
         // ================================================================
@@ -708,26 +848,26 @@
         // ================================================================
         if (apiKey) {
             updateKeyStatus();
-            addMessage('✅ تم استعادة المفتاح! 🌙 كل عام وأنتم بخير.', 'ai');
+            addMessage('✅ تم استعادة المفتاح! 🇾🇪 كل عام وأنتم بخير.', 'ai');
         } else {
             const recovered = restoreKeyFromNumbers();
             if (recovered && recovered.startsWith('gsk_') && recovered.length > 10) {
                 apiKey = recovered;
                 localStorage.setItem('groq_api_key', apiKey);
                 updateKeyStatus();
-                addMessage('🔓 تم استعادة المفتاح تلقائياً! 🕌 ذكرى المولد النبوي.', 'ai');
+                addMessage('🔓 تم استعادة المفتاح تلقائياً! 🕌 ذكرى المولد النبوي · من اليمن.', 'ai');
                 console.log('✅ استعادة تلقائية ناجحة');
             } else {
                 updateKeyStatus();
                 setTimeout(() => {
-                    addMessage('🌙 أدخل مفتاح Groq API في الحقل أعلاه، أو استخدم زر "حفظ" لتفعيل الذكاء الاصطناعي. كل عام وأنتم بخير.', 'ai');
+                    addMessage('🇾🇪 أهلاً وسهلاً! أدخل مفتاح Groq API في الحقل أعلاه، أو استخدم زر "حفظ" لتفعيل الذكاء الاصطناعي. كل عام وأنتم بخير.', 'ai');
                 }, 1000);
             }
         }
 
-        console.log('🚀 عبده AI - نسخة المولد النبوي 1448');
+        console.log('🚀 عبده AI · نسخة يمنية · المولد النبوي 1448');
         console.log('🛡️ نظام الدفاع عن شخصية عبده عبدالله محمد العمري مفعّل');
-        console.log('🌙 تهنئة بمناسبة المولد النبوي الشريف');
+        console.log('🇾🇪 زخارف يمنية ونقوش سبأية');
     </script>
 </body>
 </html>
