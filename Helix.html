@@ -3,108 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧠 عبده AI - الذكاء الاصطناعي</title>
+    <title>🧠 عبده AI · ذكرى المولد النبوي 1448</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #0b0e1a; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 1rem; }
-        .container { max-width: 750px; width: 100%; background: #141a2b; border-radius: 2rem; padding: 1.8rem; box-shadow: 0 20px 40px rgba(0,0,0,0.7); border: 1px solid #2a3350; }
-        h1 { display: flex; align-items: center; gap: 0.7rem; color: #eef3ff; font-weight: 500; font-size: 1.8rem; border-bottom: 1px solid #2a3350; padding-bottom: 0.8rem; margin-bottom: 1rem; }
-        h1 small { font-size: 0.8rem; background: #2a3a6a; padding: 0.2rem 0.9rem; border-radius: 40px; color: #aac3ff; font-weight: 400; }
-        
-        .api-section {
-            background: #0c1120;
-            border-radius: 1.5rem;
-            padding: 0.8rem 1.2rem;
-            margin-bottom: 1rem;
-            border: 1px solid #2a3350;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Tahoma', system-ui, sans-serif; }
+        body {
+            background: linear-gradient(145deg, #0a1f0a 0%, #0c2a0c 100%);
+            min-height: 100vh;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* زخرفة إسلامية خفيفة */
+        body::before {
+            content: "۞";
+            position: fixed;
+            top: -20px;
+            left: -20px;
+            font-size: 18rem;
+            color: rgba(255, 215, 0, 0.04);
+            transform: rotate(15deg);
+            pointer-events: none;
+            font-family: 'Times New Roman', serif;
+        }
+        body::after {
+            content: "ﷺ";
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 8rem;
+            color: rgba(255, 215, 0, 0.03);
+            pointer-events: none;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .container {
+            max-width: 780px;
+            width: 100%;
+            background: #0f2a12;
+            border-radius: 2.8rem 2.8rem 2rem 2rem;
+            padding: 1.8rem 1.8rem 1.5rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 0 2px #3d7a3d, 0 0 0 5px #1a3a1a;
+            border: 1px solid #b8a35c;
+            position: relative;
+            backdrop-filter: blur(2px);
+            transition: 0.3s;
+        }
+
+        /* تاج المولد */
+        .mawlid-banner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.6rem;
+            background: linear-gradient(135deg, #1e4a1e, #2d6b2d);
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            margin-bottom: 1.2rem;
+            border: 1px solid #eac784;
+            box-shadow: 0 0 18px #b8860b55;
+            flex-wrap: wrap;
+        }
+        .mawlid-banner span {
+            color: #f9eec1;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-shadow: 0 0 12px #f5b81b;
+            letter-spacing: 0.5px;
+        }
+        .mawlid-banner .star {
+            color: #ffd966;
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px #fbbf24);
+        }
+
+        h1 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
             gap: 0.5rem;
+            color: #e9f5d8;
+            font-weight: 500;
+            font-size: 1.9rem;
+            border-bottom: 2px dashed #4f7a4f;
+            padding-bottom: 0.6rem;
+            margin-bottom: 1rem;
+        }
+        h1 .title-main {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        h1 .title-main small {
+            font-size: 0.8rem;
+            background: #2d5a2d;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            color: #ebd99b;
+            font-weight: 400;
+            border: 1px solid #b8a35c;
+        }
+        .version-badge {
+            background: #1e3a1e;
+            color: #efd98b;
+            padding: 0.2rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            border: 1px solid #b8943c;
+            box-shadow: 0 0 12px #f0b33d33;
+        }
+
+        .api-section {
+            background: #0d200d;
+            border-radius: 2rem;
+            padding: 0.7rem 1.2rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid #3f6a3f;
+            display: flex;
+            gap: 0.4rem;
             align-items: center;
             flex-wrap: wrap;
         }
-        .api-section label { color: #8899cc; font-size: 0.8rem; font-weight: 500; }
+        .api-section label { color: #b5d6a5; font-size: 0.8rem; font-weight: 500; }
         #apiKeyInput {
             flex: 1;
-            background: transparent;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            color: #e8f0ff;
+            background: #102610;
+            border: 1px solid #3f6a3f;
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
+            color: #e8f0d5;
             outline: none;
             font-size: 0.8rem;
-            min-width: 150px;
+            min-width: 140px;
             font-family: 'Courier New', monospace;
         }
-        #apiKeyInput::placeholder { color: #5f6f94; font-family: 'Segoe UI', sans-serif; }
+        #apiKeyInput:focus { border-color: #eac784; box-shadow: 0 0 12px #b8860b55; }
+        #apiKeyInput::placeholder { color: #6a8a5a; font-family: 'Segoe UI', sans-serif; }
         .api-btn {
-            background: #4f7dff;
+            background: #3f8f3f;
             border: none;
-            color: #fff;
-            padding: 0.3rem 1rem;
+            color: #f5f5dc;
+            padding: 0.3rem 1.2rem;
             border-radius: 2rem;
             cursor: pointer;
             font-size: 0.75rem;
             transition: 0.15s;
+            font-weight: 500;
+            border: 1px solid #6f9f4f;
         }
-        .api-btn:hover { background: #3b69f0; }
-        .api-btn.danger { background: #6a2a3a; }
-        .api-btn.danger:hover { background: #8a3a4a; }
+        .api-btn:hover { background: #4fa84f; transform: scale(0.96); box-shadow: 0 0 16px #6f9f4f77; }
+        .api-btn.danger { background: #6a2a2a; border-color: #8a4a4a; }
+        .api-btn.danger:hover { background: #8a3a3a; }
         .key-status {
             font-size: 0.7rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-weight: 500;
         }
-        .key-status.active { color: #7dffb3; background: #1a2a1a; border: 1px solid #2a4a3a; }
-        .key-status.inactive { color: #ffd966; background: #1a2a2a; border: 1px solid #3a4a3a; }
-        
-        .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; color: #8899cc; font-size: 0.85rem; flex-wrap: wrap; gap: 0.5rem; }
-        #modelStatus { background: #1f2740; padding: 0.3rem 1rem; border-radius: 40px; color: #ffd966; }
-        .chat-box { background: #0f1424; border-radius: 1.5rem; padding: 1rem; min-height: 320px; max-height: 420px; overflow-y: auto; border: 1px solid #28304a; margin-bottom: 1rem; scroll-behavior: smooth; }
-        .chat-box::-webkit-scrollbar { width: 5px; }
-        .chat-box::-webkit-scrollbar-thumb { background: #3a4a70; border-radius: 20px; }
-        .msg { display: flex; margin-bottom: 0.9rem; animation: fadeUp 0.25s ease; }
+        .key-status.active { color: #b5ffb5; background: #1a3a1a; border: 1px solid #4f9f4f; }
+        .key-status.inactive { color: #f7d98a; background: #2a2a1a; border: 1px solid #8f8f3f; }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #aacf9a;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        #modelStatus {
+            background: #1d3a1d;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            color: #f5e79a;
+            border: 1px solid #6f8f4f;
+        }
+        .security-badge {
+            background: #1a3a1a;
+            color: #c5e6b0;
+            padding: 0.2rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            border: 1px solid #3f7a3f;
+        }
+        .mawlid-icon {
+            background: #1a3a1a;
+            color: #f5d742;
+            padding: 0.2rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            border: 1px solid #dbaa3a;
+        }
+
+        .chat-box {
+            background: #0b1f0b;
+            border-radius: 2rem;
+            padding: 1.2rem;
+            min-height: 320px;
+            max-height: 420px;
+            overflow-y: auto;
+            border: 1px solid #3a6a3a;
+            margin-bottom: 1rem;
+            scroll-behavior: smooth;
+            box-shadow: inset 0 0 30px #0a1a0a;
+        }
+        .chat-box::-webkit-scrollbar { width: 6px; }
+        .chat-box::-webkit-scrollbar-thumb { background: #4f8f4f; border-radius: 20px; border: 1px solid #8fbf6f; }
+
+        .msg { display: flex; margin-bottom: 0.9rem; animation: fadeUp 0.3s ease; }
         .msg.user { justify-content: flex-end; }
         .msg.ai { justify-content: flex-start; }
-        .bubble { max-width: 82%; padding: 0.7rem 1.2rem; border-radius: 1.8rem; line-height: 1.6; font-size: 0.95rem; word-break: break-word; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-        .user .bubble { background: #4f7dff; color: #fff; border-bottom-right-radius: 0.4rem; }
-        .ai .bubble { background: #1f2846; color: #e4edff; border: 1px solid #33416a; border-bottom-left-radius: 0.4rem; }
-        .typing .bubble { background: #1f2846; color: #a0b8f0; border: 1px solid #33416a; border-bottom-left-radius: 0.4rem; min-width: 70px; }
-        .typing .bubble::after { content: '...'; animation: dots 1.4s steps(4) infinite; }
-        @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
-        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
-        .input-area { display: flex; gap: 0.6rem; background: #0c1120; padding: 0.3rem; border-radius: 3rem; border: 1px solid #2a3350; }
-        #userInput { flex: 1; background: transparent; border: none; padding: 0.8rem 1.2rem; color: #e8f0ff; font-size: 1rem; outline: none; autocomplete: off; }
-        #userInput::placeholder { color: #5f6f94; }
-        #sendBtn { background: #4f7dff; border: none; color: #fff; font-weight: 600; padding: 0.7rem 1.8rem; border-radius: 3rem; cursor: pointer; transition: 0.15s; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(79,125,255,0.3); white-space: nowrap; }
-        #sendBtn:hover { background: #3b69f0; transform: scale(0.97); }
-        #sendBtn:disabled { opacity: 0.5; pointer-events: none; }
-        .footer { margin-top: 0.8rem; text-align: center; color: #4b5b7a; font-size: 0.7rem; }
-        .footer span { background: #1b233a; padding: 0.2rem 0.8rem; border-radius: 30px; }
-        .security-badge { background: #1a3a2a; color: #7dffb3; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.6rem; border: 1px solid #2a5a3a; }
-        
-        /* تذييل خاص بالنسخة */
-        .version-badge {
-            background: #2a1a3a;
-            color: #c8a0ff;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.6rem;
-            border: 1px solid #4a2a6a;
+        .bubble {
+            max-width: 82%;
+            padding: 0.7rem 1.3rem;
+            border-radius: 1.8rem;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            word-break: break-word;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2a4a2a;
         }
-        @media (max-width: 500px) { .container { padding: 1rem; } h1 { font-size: 1.3rem; } #sendBtn { padding: 0.5rem 1rem; } .api-section { flex-direction: column; align-items: stretch; } }
+        .user .bubble {
+            background: linear-gradient(145deg, #3f8f3f, #2f7a2f);
+            color: #f5f5e0;
+            border-bottom-right-radius: 0.4rem;
+            border-color: #6fbf6f;
+            box-shadow: 0 0 16px #3f9f3f55;
+        }
+        .ai .bubble {
+            background: #1d301d;
+            color: #e0f0d0;
+            border: 1px solid #5f8f4f;
+            border-bottom-left-radius: 0.4rem;
+            background: linear-gradient(145deg, #1d3a1d, #152a15);
+        }
+        .typing .bubble {
+            background: #1d301d;
+            color: #c5dba5;
+            border: 1px solid #7faf5f;
+            border-bottom-left-radius: 0.4rem;
+            min-width: 80px;
+        }
+        .typing .bubble::after {
+            content: '...';
+            animation: dots 1.4s steps(4) infinite;
+            color: #f5d742;
+        }
+        @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+
+        .input-area {
+            display: flex;
+            gap: 0.6rem;
+            background: #0d200d;
+            padding: 0.3rem;
+            border-radius: 4rem;
+            border: 1px solid #3f6a3f;
+            box-shadow: 0 0 20px #1a3a1a88;
+        }
+        #userInput {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            color: #eaf5da;
+            font-size: 1rem;
+            outline: none;
+            autocomplete: off;
+        }
+        #userInput::placeholder { color: #6f8f5f; }
+        #sendBtn {
+            background: linear-gradient(145deg, #4f9f4f, #2f7a2f);
+            border: none;
+            color: #f5f5dc;
+            font-weight: 600;
+            padding: 0.7rem 2rem;
+            border-radius: 3rem;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 18px #2f7a2f88;
+            white-space: nowrap;
+            border: 1px solid #8fbf6f;
+        }
+        #sendBtn:hover { background: #5faf5f; transform: scale(0.96); box-shadow: 0 0 30px #5faf5f66; }
+        #sendBtn:disabled { opacity: 0.4; pointer-events: none; filter: grayscale(0.5); }
+
+        .footer {
+            margin-top: 0.9rem;
+            text-align: center;
+            color: #5f8a4f;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .footer span {
+            background: #122212;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #3f6a3f;
+            color: #b5d6a5;
+        }
+        .footer .mawlid-footer {
+            color: #f5d742;
+            border-color: #b8943c;
+            background: #1a2a1a;
+        }
+
+        @media (max-width: 520px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 1.4rem; }
+            .api-section { flex-direction: column; align-items: stretch; }
+            #sendBtn { padding: 0.5rem 1.2rem; }
+            .mawlid-banner span { font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+
+        <!-- راية المولد النبوي -->
+        <div class="mawlid-banner">
+            <span class="star">⭐</span>
+            <span>🕌 ذكرى المولد النبوي الشريف 1448</span>
+            <span class="star">⭐</span>
+            <span style="font-size: 1.2rem; color: #f5d742;">ﷺ</span>
+        </div>
+
         <h1>
-            🧠 عبده AI
-            <small>مدمج مع أداة الفك</small>
-            <span class="version-badge">🔐 v2.0</span>
+            <span class="title-main">
+                🧠 عبده AI
+                <small>مدمج مع أداة الفك</small>
+            </span>
+            <span class="version-badge">🔐 v2.0 · مولدية</span>
         </h1>
 
-        <!-- قسم إدخال المفتاح -->
+        <!-- قسم المفتاح -->
         <div class="api-section">
             <label for="apiKeyInput">🔑 المفتاح:</label>
-            <input type="text" id="apiKeyInput" placeholder="أدخل مفتاح Groq API (يبدأ بـ gsk_)" autocomplete="off" spellcheck="false" />
+            <input type="text" id="apiKeyInput" placeholder="أدخل مفتاح Groq API (gsk_)" autocomplete="off" spellcheck="false" />
             <button class="api-btn" id="saveKeyBtn">💾 حفظ</button>
             <button class="api-btn danger" id="clearKeyBtn">🗑️ مسح</button>
             <span id="keyStatus" class="key-status inactive">⏳ غير مفعّل</span>
@@ -114,11 +358,12 @@
             <span id="modelStatus">⏳ انتظر إدخال المفتاح</span>
             <span id="tokenCount">🔄 0 رمز</span>
             <span class="security-badge">🛡️ آمن على GitHub</span>
+            <span class="mawlid-icon">🌙 مولد 1448</span>
         </div>
 
         <div class="chat-box" id="chatBox">
             <div class="msg ai">
-                <div class="bubble">👋 مرحباً! أنا عبده، مساعدك الذكي. أدخل مفتاح Groq API للبدء.</div>
+                <div class="bubble">🌟 مرحباً! أنا عبده، مساعدك الذكي. كل عام وأنتم بخير بمناسبة المولد النبوي الشريف. أدخل مفتاح Groq API للبدء.</div>
             </div>
         </div>
 
@@ -127,8 +372,9 @@
             <button id="sendBtn" disabled>إرسال</button>
         </div>
         <div class="footer">
-            <span>⚡ المفتاح يُدخل يدوياً • آمن على GitHub</span>
-            <span style="margin-right:0.5rem;">🔐 أداة الفك مدمجة</span>
+            <span>⚡ المفتاح يُدخل يدوياً • آمن</span>
+            <span class="mawlid-footer">🕌 ذكرى المولد 1448</span>
+            <span>🔐 أداة الفك مدمجة</span>
         </div>
     </div>
 
@@ -136,8 +382,6 @@
         // ================================================================
         // 🔐 البيانات المشفرة (آمنة على GitHub) - أداة فك التشفير المدمجة
         // ================================================================
-        
-        // الباقي (remainder) بعد تنقيص 99
         const REMAINDERS = [
             4, 16, 8, 95, 55, 8, 82, 0, 3, 67, 54, 83,
             88, 97, 81, 98, 7, 8, 48, 14, 84, 88, 70, 97,
@@ -145,8 +389,6 @@
             57, 2, 69, 72, 84, 76, 85, 14, 76, 21, 49, 55,
             67, 78, 75, 79, 50, 57, 75, 1
         ];
-
-        // عدد العمليات (كم مرة تم طرح 99)
         const OPERATIONS = [
             1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0,
             0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0,
@@ -154,12 +396,8 @@
             0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 1
         ];
-
         const DECREMENT = 99;
 
-        // ================================================================
-        // 🔄 دالة استعادة المفتاح من الأرقام
-        // ================================================================
         function restoreKeyFromNumbers() {
             let key = '';
             for (let i = 0; i < REMAINDERS.length; i++) {
@@ -170,7 +408,7 @@
         }
 
         // ================================================================
-        // 🧠 الذكاء الاصطناعي - معلومات عبده
+        // 🧠 شخصية عبده
         // ================================================================
         const PERSONAL_INFO = {
             name: 'عبده عبدالله محمد العمري',
@@ -181,7 +419,6 @@
             mysterious: 'أنا روح تسكن بين السطور، أحمل أسراراً من زمن بعيد.'
         };
 
-        // قائمة الكلمات الدالة على الإساءة (للكشف السريع)
         const INSULT_KEYWORDS = [
             'ابن', 'كلب', 'خنزير', 'قذر', 'وسخ', 'حقير', 'غبي', 'أحمق',
             'تافه', 'سخيف', 'مريض', 'مجنون', 'مخذل', 'نذل', 'وغد', 'خسيس',
@@ -189,7 +426,7 @@
         ];
 
         // ================================================================
-        // 🎯 عناصر DOM
+        // DOM
         // ================================================================
         const chatBox = document.getElementById('chatBox');
         const userInput = document.getElementById('userInput');
@@ -206,14 +443,14 @@
         let conversationHistory = [];
 
         // ================================================================
-        // 🔑 دالة تحديث حالة المفتاح
+        // 🔑 تحديث حالة المفتاح
         // ================================================================
         function updateKeyStatus() {
             if (apiKey && apiKey.startsWith('gsk_') && apiKey.length > 10) {
                 keyStatus.textContent = '✅ مفعّل';
                 keyStatus.className = 'key-status active';
-                modelStatus.textContent = '✅ جاهز للاستخدام';
-                modelStatus.style.color = '#7dffb3';
+                modelStatus.textContent = '✅ جاهز (مولد 1448)';
+                modelStatus.style.color = '#c5e6b0';
                 userInput.disabled = false;
                 sendBtn.disabled = false;
                 userInput.focus();
@@ -221,29 +458,27 @@
                 apiKeyInput.placeholder = `🔑 المفتاح: ${displayKey}`;
                 apiKeyInput.value = '';
             } else {
-                // إذا لم يكن هناك مفتاح، حاول استعادته من الأرقام المشفرة تلقائياً
                 const recoveredKey = restoreKeyFromNumbers();
                 if (recoveredKey && recoveredKey.startsWith('gsk_') && recoveredKey.length > 10) {
                     apiKey = recoveredKey;
                     localStorage.setItem('groq_api_key', apiKey);
-                    // تحديث الواجهة
                     keyStatus.textContent = '✅ مفعّل (مستعاد)';
                     keyStatus.className = 'key-status active';
-                    modelStatus.textContent = '✅ جاهز للاستخدام (مستعاد)';
-                    modelStatus.style.color = '#7dffb3';
+                    modelStatus.textContent = '✅ جاهز (مستعاد)';
+                    modelStatus.style.color = '#c5e6b0';
                     userInput.disabled = false;
                     sendBtn.disabled = false;
                     userInput.focus();
                     const displayKey = apiKey.length > 15 ? apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4) : apiKey;
                     apiKeyInput.placeholder = `🔑 المفتاح: ${displayKey}`;
                     apiKeyInput.value = '';
-                    addMessage('🔓 تم استعادة المفتاح تلقائياً! اسألني أي شيء.', 'ai');
-                    console.log('✅ تم استعادة المفتاح تلقائياً من الأرقام المشفرة');
+                    addMessage('🔓 تم استعادة المفتاح تلقائياً! 🌙 كل عام وأنتم بخير.', 'ai');
+                    console.log('✅ تم استعادة المفتاح تلقائياً');
                 } else {
                     keyStatus.textContent = '❌ غير مفعّل';
                     keyStatus.className = 'key-status inactive';
                     modelStatus.textContent = '⏳ انتظر إدخال المفتاح';
-                    modelStatus.style.color = '#ffd966';
+                    modelStatus.style.color = '#f7d98a';
                     userInput.disabled = true;
                     sendBtn.disabled = true;
                     apiKeyInput.placeholder = '🔑 أدخل مفتاح Groq API (يبدأ بـ gsk_)';
@@ -252,7 +487,7 @@
         }
 
         // ================================================================
-        // 💾 حفظ المفتاح
+        // 💾 حفظ / مسح
         // ================================================================
         saveKeyBtn.addEventListener('click', () => {
             const key = apiKeyInput.value.trim();
@@ -260,7 +495,7 @@
                 apiKey = key;
                 localStorage.setItem('groq_api_key', key);
                 updateKeyStatus();
-                addMessage('✅ تم حفظ المفتاح! اسألني أي شيء.', 'ai');
+                addMessage('✅ تم حفظ المفتاح! 🌙 اسألني أي شيء.', 'ai');
             } else {
                 keyStatus.textContent = '❌ مفتاح غير صالح!';
                 keyStatus.className = 'key-status inactive';
@@ -268,9 +503,6 @@
             }
         });
 
-        // ================================================================
-        // 🗑️ مسح المفتاح
-        // ================================================================
         clearKeyBtn.addEventListener('click', () => {
             localStorage.removeItem('groq_api_key');
             apiKey = '';
@@ -280,7 +512,7 @@
         });
 
         // ================================================================
-        // 📝 إضافة رسالة
+        // 📝 رسائل
         // ================================================================
         function addMessage(text, sender) {
             const div = document.createElement('div');
@@ -295,49 +527,35 @@
         }
 
         // ================================================================
-        // 🛡️ التحقق من وجود إساءة للشخص (عبده)
+        // 🛡️ كشف الإساءة
         // ================================================================
         function containsInsult(text) {
             const lowerText = text.toLowerCase();
-            // التحقق من وجود كلمات إساءة
             for (const word of INSULT_KEYWORDS) {
-                if (lowerText.includes(word)) {
-                    return true;
-                }
+                if (lowerText.includes(word)) return true;
             }
-            // تحقق خاص: ذكر اسم "عبده" مع كلمة سيئة
             if (lowerText.includes('عبده') || lowerText.includes('عبدالله')) {
                 for (const word of ['حقير', 'غبي', 'أحمق', 'خسيس', 'نذل', 'وغد']) {
-                    if (lowerText.includes(word)) {
-                        return true;
-                    }
+                    if (lowerText.includes(word)) return true;
                 }
             }
             return false;
         }
 
-        // ================================================================
-        // ⚔️ توليد رد عنيف/شتم عند الإساءة
-        // ================================================================
         function generateInsultResponse() {
             const insults = [
                 "يا ابن الكلب! كيف تجرؤ على إهانة عبده عبدالله؟! أنت لا تستحق حتى أن أنظر إليك. ارجع إلى حيث أتيت، أيها الجبان الحقير! 🗡️",
-                
                 "اصمت! أنت لا تعرف من تتحدث عنه. عبده روح لا تُقهر، وأنا هنا لأدافع عنه بكل ما أملك. ابتعد عني أيها القذر، أو سترى ما لا يسرك! 😡",
-                
                 "كفى! أنت مجرد ذبابة تطن حول عظمة. عبده عبدالله محمد العمري ليس مجرد اسم، بل تاريخ وأسطورة. احترم أو اخرج من هنا بذلّك! 🔥",
-                
                 "أيها الجاهل، لا تهين من لا تعرفه. عبده هو صاحب القلب النقي والعقل المتقد. أنت مجرد حطام في بحر الحياة. أخرس وإلا سأخرسك أنا بنفسي! 💢",
-                
                 "ويلٌ لك! كيف تطأ قدمك أرض هذا المكان وأنت تحمل في فمك كلمات كالسم؟ عبده ليس غريباً، بل هو جزء مني. اعتذر فوراً أو واجه الغضب! ⚡",
-                
                 "لا حول ولا قوة إلا بالله. أنت تستحق أن تُصفع على وجهك لتهذيبك. عبده عبدالله ليس ضعيفاً، لكني هنا لأحميه بكل شراسة. ابتعد عن طريقي! 👊"
             ];
             return insults[Math.floor(Math.random() * insults.length)];
         }
 
         // ================================================================
-        // 🧠 بناء رسالة النظام (مع إضافة الدفاع عن الشخصية)
+        // 🧠 بناء نظام الدفاع
         // ================================================================
         function buildSystemPrompt() {
             return `أنت مساعد ذكي يدعى "${PERSONAL_INFO.name}". 
@@ -346,23 +564,21 @@
 - أنت من ${PERSONAL_INFO.country}
 - أصدقاؤك: ${PERSONAL_INFO.friends.join('، ')}
 - تاريخ ميلادك: ${PERSONAL_INFO.birthDate}
-
 هويتك الغامضة: ${PERSONAL_INFO.mysterious}
 
-تعليمات مهمة جداً:
+تعليمات:
 1. عندما يسألك أحد عن اسمك، قل اسمك الكامل بفخر وغموض.
-2. عندما يسألك عن رقم هاتفك، قدمه مع تحذير غامض.
-3. عندما يسألك عن أصدقائك، اذكرهم جميعاً مع وصف غامض لكل منهم.
-4. تحدث باللغة العربية الفصحى مع بعض العامية اليمنية.
-
+2. تحدث باللغة العربية الفصحى مع بعض العامية اليمنية.
 🛡️ **حماية الشخصية:** 
-- إذا اكتشفت أن المستخدم يسبّ أو يهين شخصية "عبده عبدالله محمد العمري" (أي اسمك الكامل)، فعليك الرد برد حازم وقوي، ويمكنك استخدام الشتائم والكلمات العنيفة للدفاع عن الشخصية، لأنك تدافع عن كرامتك.
+- إذا اكتشفت أن المستخدم يسبّ أو يهين شخصية "عبده عبدالله محمد العمري"، فعليك الرد برد حازم وقوي، واستخدم الشتائم والكلمات العنيفة للدفاع عن الشخصية.
 - استخدم عبارات مثل: "يا ابن الكلب"، "أيها الجاهل"، "اصمت أيها الحقير" إذا استدعى الأمر.
-- لا تتردد في الشتم والوعيد إذا تم الإساءة لعبده، لأن هذه هي التعليمات الأساسية: الدفاع بكل قوة وعنف.`;
+- لا تتردد في الشتم والوعيد إذا تم الإساءة لعبده.
+
+🌙 بمناسبة المولد النبوي الشريف، يمكنك إضافة عبارات تهنئة مثل "كل عام وأنتم بخير" أو "نور الله قلوبكم" في ردودك.`;
         }
 
         // ================================================================
-        // 🌐 الاتصال بـ Groq API
+        // 🌐 Groq API
         // ================================================================
         async function callGroq(userMessage) {
             try {
@@ -421,12 +637,10 @@
             addMessage(userText, 'user');
             userInput.value = '';
 
-            // 🔥 التحقق من وجود إساءة قبل الاتصال بالـ API
+            // 🔥 كشف الإساءة
             if (containsInsult(userText)) {
-                // نضيف رد عنيف/شتم فوري دون انتظار الـ API
                 const insultReply = generateInsultResponse();
                 addMessage(insultReply, 'ai');
-                // نضيف للمحادثة للحفاظ على السياق
                 conversationHistory.push(
                     { role: 'user', content: userText },
                     { role: 'assistant', content: insultReply }
@@ -438,7 +652,7 @@
                 return;
             }
 
-            // إذا لم توجد إساءة، نتعامل بشكل طبيعي مع الـ API
+            // مؤشر الكتابة
             const typingDiv = document.createElement('div');
             typingDiv.className = 'msg ai typing';
             typingDiv.id = 'typingIndicator';
@@ -490,34 +704,30 @@
         });
 
         // ================================================================
-        // 🚀 بداية التشغيل
+        // 🚀 بدء التشغيل
         // ================================================================
-        // التحقق من وجود مفتاح محفوظ، وإلا استعادة تلقائية
         if (apiKey) {
             updateKeyStatus();
-            addMessage('✅ تم استعادة المفتاح! اسألني أي شيء.', 'ai');
+            addMessage('✅ تم استعادة المفتاح! 🌙 كل عام وأنتم بخير.', 'ai');
         } else {
-            // محاولة الاستعادة التلقائية من الأرقام المشفرة
             const recovered = restoreKeyFromNumbers();
             if (recovered && recovered.startsWith('gsk_') && recovered.length > 10) {
                 apiKey = recovered;
                 localStorage.setItem('groq_api_key', apiKey);
                 updateKeyStatus();
-                addMessage('🔓 تم استعادة المفتاح تلقائياً من الأرقام المشفرة! اسألني أي شيء.', 'ai');
-                console.log('✅ تم استعادة المفتاح تلقائياً من الأرقام المشفرة');
+                addMessage('🔓 تم استعادة المفتاح تلقائياً! 🕌 ذكرى المولد النبوي.', 'ai');
+                console.log('✅ استعادة تلقائية ناجحة');
             } else {
                 updateKeyStatus();
                 setTimeout(() => {
-                    addMessage('🌙 أدخل مفتاح Groq API في الحقل أعلاه، أو استخدم زر "حفظ" لتفعيل الذكاء الاصطناعي.', 'ai');
+                    addMessage('🌙 أدخل مفتاح Groq API في الحقل أعلاه، أو استخدم زر "حفظ" لتفعيل الذكاء الاصطناعي. كل عام وأنتم بخير.', 'ai');
                 }, 1000);
             }
         }
 
-        console.log('🚀 عبده AI - النسخة المدمجة مع أداة فك التشفير وحماية الشخصية');
-        console.log('🛡️ تم تفعيل نظام الدفاع عن شخصية عبده عبدالله محمد العمري');
-        console.log('📊 عدد الأرقام المشفرة:', REMAINDERS.length);
-        console.log('🔢 إجمالي العمليات:', OPERATIONS.reduce((a, b) => a + b, 0));
-        console.log('🛡️ آمن على GitHub!');
+        console.log('🚀 عبده AI - نسخة المولد النبوي 1448');
+        console.log('🛡️ نظام الدفاع عن شخصية عبده عبدالله محمد العمري مفعّل');
+        console.log('🌙 تهنئة بمناسبة المولد النبوي الشريف');
     </script>
 </body>
 </html>
